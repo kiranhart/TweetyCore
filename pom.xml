@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <groupId>ca.tweetzy</groupId>
-    <artifactId>TweetyCore</artifactId>
+    <artifactId>tweetycore</artifactId>
     <modelVersion>4.0.0</modelVersion>
     <version>1.0.0</version>
     <packaging>jar</packaging>
@@ -12,13 +12,26 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <github.global.server>github</github.global.server>
     </properties>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub kiranhart Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/kiranhart/TweetyCore</url>
+        </repository>
+    </distributionManagement>
 
     <build>
         <sourceDirectory>./src/main/java</sourceDirectory>
         <defaultGoal>clean install</defaultGoal>
         <finalName>TweetyCore-${project.version}</finalName>
         <plugins>
+            <!--            DEPLOYMENT STUFF              -->
+
+            <!--      ==============================      -->
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -57,40 +70,40 @@
                     </execution>
                 </executions>
             </plugin>
-<!--            <plugin>-->
-<!--                <groupId>org.apache.maven.plugins</groupId>-->
-<!--                <artifactId>maven-shade-plugin</artifactId>-->
-<!--                <version>3.1.0</version>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <id>shaded</id>-->
-<!--                        <phase>package</phase>-->
-<!--                        <goals>-->
-<!--                            <goal>shade</goal>-->
-<!--                        </goals>-->
-<!--                        <configuration>-->
-<!--                            <shadedArtifactAttached>false</shadedArtifactAttached>-->
-<!--                            <createDependencyReducedPom>true</createDependencyReducedPom>-->
-<!--                            <artifactSet>-->
-<!--                                <includes>-->
-<!--                                    <include>ca.tweetzy:*</include>-->
-<!--                                    <include>com.zaxxer:HikariCP</include>-->
-<!--                                </includes>-->
-<!--                            </artifactSet>-->
-<!--                            <filters>-->
-<!--                                <filter>-->
-<!--                                    <artifact>*:*</artifact>-->
-<!--                                    <includes>-->
-<!--                                        <include>ca/</include>-->
-<!--                                        <include>META-INF/MANIFEST.MF</include>-->
-<!--                                        <include>META-INF/maven/ca.tweetzy/TweetyCore/</include>-->
-<!--                                    </includes>-->
-<!--                                </filter>-->
-<!--                            </filters>-->
-<!--                        </configuration>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--            </plugin>-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>shaded</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <shadedArtifactAttached>false</shadedArtifactAttached>
+                            <createDependencyReducedPom>true</createDependencyReducedPom>
+                            <artifactSet>
+                                <includes>
+                                    <include>ca.tweetzy:*</include>
+                                    <include>com.zaxxer:HikariCP</include>
+                                </includes>
+                            </artifactSet>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <includes>
+                                        <include>ca/</include>
+                                        <include>META-INF/MANIFEST.MF</include>
+                                        <include>META-INF/maven/ca.tweetzy/TweetyCore/</include>
+                                    </includes>
+                                </filter>
+                            </filters>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
     <repositories>
@@ -138,6 +151,11 @@
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
             <version>3.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-deploy-plugin</artifactId>
+            <version>2.8.2</version>
         </dependency>
     </dependencies>
 </project>
