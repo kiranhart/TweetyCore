@@ -4,7 +4,6 @@ import ca.tweetzy.core.commands.CommandManager;
 import ca.tweetzy.core.core.PluginInfo;
 import ca.tweetzy.core.core.TweetzyCoreCommand;
 import ca.tweetzy.core.core.TweetzyCoreInfoCommand;
-import ca.tweetzy.core.inventory.TInv;
 import ca.tweetzy.core.inventory.TInventory;
 import ca.tweetzy.core.utils.TextUtils;
 import org.bukkit.Bukkit;
@@ -23,7 +22,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Consumer;
 import java.util.logging.Level;
 
 /**
@@ -189,12 +187,6 @@ public class TweetyCore {
                         TInventory gui = (TInventory) e.getInventory().getHolder();
                         gui.onOpen(e);
                     }
-
-                    if (e.getInventory().getHolder() instanceof TInv) {
-                        TInv inv = (TInv) e.getInventory().getHolder();
-                        inv.handleOpen(e);
-                    }
-
                 } catch (Exception ex) {
                 }
             }
@@ -207,20 +199,6 @@ public class TweetyCore {
                         gui.onClick(e);
                         gui.onClick(e, e.getRawSlot());
                     }
-
-                    if (e.getInventory().getHolder() instanceof TInv && e.getClickedInventory() != null) {
-                        TInv inv = (TInv) e.getInventory().getHolder();
-
-                        boolean wasCancelled = e.isCancelled();
-                        e.setCancelled(true);
-
-                        inv.handleClick(e);
-
-                        if (!wasCancelled && !e.isCancelled()) {
-                            e.setCancelled(false);
-                        }
-                    }
-
                 } catch (Exception ex) {
                 }
             }
@@ -232,14 +210,6 @@ public class TweetyCore {
                         TInventory gui = (TInventory) e.getInventory().getHolder();
                         gui.onClose(e);
                     }
-
-                    if (e.getInventory().getHolder() instanceof TInv) {
-                        TInv inv = (TInv) e.getInventory().getHolder();
-                        if (inv.handleClose(e)) {
-                            plugin.getServer().getScheduler().runTask(plugin, () -> inv.openPage((Player) e.getPlayer(), inv.page));
-                        }
-                    }
-
                 } catch (Exception ex) {
                 }
             }

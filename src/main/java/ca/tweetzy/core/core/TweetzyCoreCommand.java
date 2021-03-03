@@ -1,6 +1,8 @@
 package ca.tweetzy.core.core;
 
+import ca.tweetzy.core.TweetyCore;
 import ca.tweetzy.core.commands.AbstractCommand;
+import ca.tweetzy.core.gui.GuiManager;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -14,6 +16,8 @@ import java.util.List;
  */
 public class TweetzyCoreCommand extends AbstractCommand {
 
+    protected GuiManager guiManager;
+
     public TweetzyCoreCommand() {
         super(CommandType.CONSOLE_OK, "tweetzy");
     }
@@ -21,7 +25,10 @@ public class TweetzyCoreCommand extends AbstractCommand {
     @Override
     protected ReturnType runCommand(CommandSender sender, String... args) {
         if (sender instanceof Player) {
-            ((Player) sender).openInventory(new TweetzyOverviewInventory().getInventory());
+            if (guiManager == null || guiManager.isClosed()) {
+                guiManager = new GuiManager(TweetyCore.getHijackedPlugin());
+            }
+            guiManager.showGUI((Player) sender, new TweetzyCoreOverviewGUI());
         } else {
             sender.sendMessage("/tweetzy info");
         }

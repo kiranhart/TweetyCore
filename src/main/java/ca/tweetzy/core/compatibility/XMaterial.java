@@ -1340,7 +1340,7 @@ public enum XMaterial {
      *
      * @see #getData()
      */
-    private final byte data;
+    private final Byte data;
     /**
      * A list of material names that was being used for older verions.
      *
@@ -2041,6 +2041,14 @@ public enum XMaterial {
         return ISFLAT || this.isDamageable() || item.getDurability() == this.data;
     }
 
+    public boolean matches(ItemStack item) {
+        return item != null && item.getType() == parseMaterial() && (data == null || item.getDurability() == data);
+    }
+
+    public static XMaterial getMaterial(String name) {
+        return name == null ? null : valueOf(name.toUpperCase());
+    }
+
     /**
      * Gets the suggested material names that can be used
      * if the material is not supported in the current version.
@@ -2088,5 +2096,134 @@ public enum XMaterial {
      */
     public boolean isFromNewSystem() {
         return this.legacy.length != 0 && Integer.parseInt(this.legacy[0].substring(2)) > 13;
+    }
+
+    static LinkedHashSet<XMaterial> all = null;
+
+    public static Set<XMaterial> getAllValidItemMaterials() {
+        if (all == null) {
+            all = new LinkedHashSet<>();
+            for (XMaterial mat : values()) {
+                if (mat.isValidItem()) {
+                    all.add(mat);
+                }
+            }
+        }
+        return Collections.unmodifiableSet(all);
+    }
+
+    public boolean isValidItem() {
+        switch (this) {
+            case ACACIA_WALL_SIGN:
+            case AIR:
+            case ATTACHED_MELON_STEM:
+            case ATTACHED_PUMPKIN_STEM:
+            case BAMBOO_SAPLING:
+            case BEETROOTS:
+            case BIRCH_WALL_SIGN:
+            case BLACK_WALL_BANNER:
+            case BLUE_WALL_BANNER:
+            case BRAIN_CORAL_WALL_FAN:
+            case BROWN_WALL_BANNER:
+            case BUBBLE_COLUMN:
+            case BUBBLE_CORAL_WALL_FAN:
+            case CARROTS:
+            case CAVE_AIR:
+            case COCOA:
+            case CREEPER_WALL_HEAD:
+            case CYAN_WALL_BANNER:
+            case DARK_OAK_WALL_SIGN:
+            case DEAD_BRAIN_CORAL_WALL_FAN:
+            case DEAD_BUBBLE_CORAL_WALL_FAN:
+            case DEAD_FIRE_CORAL_WALL_FAN:
+            case DEAD_HORN_CORAL_WALL_FAN:
+            case DEAD_TUBE_CORAL_WALL_FAN:
+            case DRAGON_WALL_HEAD:
+            case END_GATEWAY:
+            case END_PORTAL:
+            case FARMLAND:
+            case FIRE: // used to be able to in older versions
+            case FIRE_CORAL_WALL_FAN:
+            case FROSTED_ICE:
+            case GRAY_WALL_BANNER:
+            case GREEN_WALL_BANNER:
+            case HORN_CORAL_WALL_FAN:
+            case JUNGLE_WALL_SIGN:
+            case KELP_PLANT:
+            case LAVA:
+            case LIGHT_BLUE_WALL_BANNER:
+            case LIGHT_GRAY_WALL_BANNER:
+            case LIME_WALL_BANNER:
+            case MAGENTA_WALL_BANNER:
+            case MELON_STEM:
+            case MOVING_PISTON:
+            case NETHER_PORTAL:
+            case OAK_WALL_SIGN:
+            case ORANGE_WALL_BANNER:
+            case PINK_WALL_BANNER:
+            case PISTON_HEAD:
+            case PLAYER_WALL_HEAD:
+            case POTATOES:
+            case POTTED_ACACIA_SAPLING:
+            case POTTED_ALLIUM:
+            case POTTED_AZURE_BLUET:
+            case POTTED_BAMBOO:
+            case POTTED_BIRCH_SAPLING:
+            case POTTED_BLUE_ORCHID:
+            case POTTED_BROWN_MUSHROOM:
+            case POTTED_CACTUS:
+            case POTTED_CORNFLOWER:
+            case POTTED_DANDELION:
+            case POTTED_DARK_OAK_SAPLING:
+            case POTTED_DEAD_BUSH:
+            case POTTED_FERN:
+            case POTTED_JUNGLE_SAPLING:
+            case POTTED_LILY_OF_THE_VALLEY:
+            case POTTED_OAK_SAPLING:
+            case POTTED_ORANGE_TULIP:
+            case POTTED_OXEYE_DAISY:
+            case POTTED_PINK_TULIP:
+            case POTTED_POPPY:
+            case POTTED_RED_MUSHROOM:
+            case POTTED_RED_TULIP:
+            case POTTED_SPRUCE_SAPLING:
+            case POTTED_WHITE_TULIP:
+            case POTTED_WITHER_ROSE:
+            case PUMPKIN_STEM:
+            case PURPLE_WALL_BANNER:
+            case REDSTONE_WALL_TORCH:
+            case REDSTONE_WIRE:
+            case RED_WALL_BANNER:
+            case SKELETON_WALL_SKULL:
+            case SPRUCE_WALL_SIGN:
+            case SWEET_BERRY_BUSH:
+            case TALL_SEAGRASS:
+            case TRIPWIRE:
+            case TUBE_CORAL_WALL_FAN:
+            case VOID_AIR:
+            case WALL_TORCH:
+            case WATER:
+            case WHITE_WALL_BANNER:
+            case WITHER_SKELETON_WALL_SKULL:
+                return false;
+        }
+        if (ServerVersion.isServerVersionAtOrBelow(ServerVersion.V1_12)) {
+            switch (this) {
+                case ACACIA_WOOD:
+                case BIRCH_WOOD:
+                case DARK_OAK_WOOD:
+                case JUNGLE_WOOD:
+                case OAK_WOOD:
+                case SPRUCE_WOOD:
+                case STRIPPED_ACACIA_WOOD:
+                case STRIPPED_BIRCH_WOOD:
+                case STRIPPED_DARK_OAK_WOOD:
+                case STRIPPED_JUNGLE_WOOD:
+                case STRIPPED_OAK_WOOD:
+                case STRIPPED_SPRUCE_WOOD:
+                    return false;
+            }
+        }
+        return true;
     }
 }
