@@ -86,12 +86,12 @@ public class PluginConfigGui extends SimplePagedGui {
         this.setTitle(ChatColor.YELLOW + plugin.getName() + " Plugin Config");
         this.setUseHeader(true);
         headerBackItem = footerBackItem = GuiUtils.getBorderItem(XMaterial.GRAY_STAINED_GLASS_PANE.parseItem());
-        this.setButton(8, GuiUtils.createButtonItem(XMaterial.OAK_DOOR, "Exit"), (event) -> event.player.closeInventory());
+        this.setButton(8, GuiUtils.createButtonItem(XMaterial.BARRIER, "&cExit"), (event) -> event.player.closeInventory());
 
         // List out all config files that this plugin has
         int i = 9;
         for (Map.Entry<String, MemoryConfiguration> config : configs.entrySet()) {
-            this.setButton(i++, GuiUtils.createButtonItem(XMaterial.BOOK, ChatColor.YELLOW + config.getKey(), "Click to edit this config"),
+            this.setButton(i++, GuiUtils.createButtonItem(XMaterial.BOOK, ChatColor.YELLOW + config.getKey(), "&7Click to edit this config"),
                     (event) -> event.manager.showGUI(event.player, new ConfigEditorGui(event.player, plugin, this, config.getKey(), config.getValue())));
         }
     }

@@ -27,6 +27,7 @@ public class MainCommand extends AbstractCommand {
         this.nestedCommands = new SimpleNestedCommand(this);
     }
 
+
     public MainCommand setHeader(String header) {
         this.header = header;
         return this;
@@ -78,12 +79,15 @@ public class MainCommand extends AbstractCommand {
                 if (!isPlayer) {
                     sender.sendMessage(ChatColor.DARK_GRAY + "- " + ChatColor.YELLOW + cmd.getSyntax() + ChatColor.GRAY + " - " + cmd.getDescription());
                 } else if (cmd.getPermissionNode() == null || sender.hasPermission(cmd.getPermissionNode())) {
-                    ClickableChat msg = new ClickableChat();
-                    final String c = "/" + command + " ";
-                    msg.addMessage(ChatColor.DARK_GRAY + "- ")
-                            .addPromptCommand(ChatColor.YELLOW + c + cmd.getSyntax(), ChatColor.YELLOW + c + cmdStr, c + cmdStr)
-                            .addMessage(ChatColor.GRAY + " - " + cmd.getDescription());
-                    msg.sendTo((Player) sender);
+//                    if (this.clickable) {
+//                        ClickableChat msg = new ClickableChat();
+//                        final String c = "/" + command + " ";
+//                        msg.addMessage(ChatColor.DARK_GRAY + "- ")
+//                                .addPromptCommand(ChatColor.YELLOW + c + cmd.getSyntax(), ChatColor.YELLOW + c + cmdStr, c + cmdStr)
+//                                .addMessage(ChatColor.GRAY + " - " + cmd.getDescription());
+//                        msg.sendTo((Player) sender);
+//                    }
+                    sender.sendMessage(ChatColor.DARK_GRAY + "- " + ChatColor.YELLOW + cmd.getSyntax() + ChatColor.GRAY + " - " + cmd.getDescription());
                 }
             }
         }

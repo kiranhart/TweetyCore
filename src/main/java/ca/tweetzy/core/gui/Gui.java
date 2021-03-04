@@ -36,6 +36,7 @@ public class Gui {
     protected boolean acceptsItems = false;
     protected boolean allowDropItems = true;
     protected boolean allowClose = true;
+    protected boolean useLockedCells = false;
     protected final Map<Integer, Boolean> unlockedCells = new HashMap<>();
     protected final Map<Integer, ItemStack> cellItems = new HashMap<>();
     protected final Map<Integer, Map<ClickType, Clickable>> conditionalButtons = new HashMap<>();
@@ -404,6 +405,20 @@ public class Gui {
     }
 
     @NotNull
+    public Gui updateItemType(int row, int col, @Nullable XMaterial type) {
+        return updateItemType(col + row * inventoryType.columns, type);
+    }
+
+    @NotNull
+    public Gui updateItemType(int cell, @Nullable XMaterial type) {
+        ItemStack item = cellItems.get(cell);
+        if (item != null && item.getType() != Material.AIR) {
+            setItem(cell, GuiUtils.updateItemType(item, type));
+        }
+        return this;
+    }
+
+    @NotNull
     public Gui updateItem(int row, int col, @Nullable String name, @NotNull String... lore) {
         return updateItem(col + row * inventoryType.columns, name, lore);
     }
@@ -756,7 +771,7 @@ public class Gui {
         createInventory();
         for (int i = 0; i < cells; ++i) {
             final ItemStack item = cellItems.get(i);
-            inventory.setItem(i, item != null ? item : (unlockedCells.getOrDefault(i, false) ? AIR : blankItem));
+            inventory.setItem(i, item != null ? item : useLockedCells ? (unlockedCells.getOrDefault(i, false) ? AIR : blankItem) : AIR);
         }
 
 
@@ -788,7 +803,7 @@ public class Gui {
         final int cells = rows * inventoryType.columns;
         for (int i = 0; i < cells; ++i) {
             final ItemStack item = cellItems.get(i);
-            inventory.setItem(i, item != null ? item : (unlockedCells.getOrDefault(i, false) ? AIR : blankItem));
+            inventory.setItem(i, item != null ? item : useLockedCells ? (unlockedCells.getOrDefault(i, false) ? AIR : blankItem) : AIR);
         }
     }
 
@@ -859,5 +874,13 @@ public class Gui {
 
     public void setDefaultSound(XSound sound) {
         defaultSound = sound;
+    }
+
+    public void setUseLockedCells(boolean useLockedCells) {
+        this.useLockedCells = useLockedCells;
+    }
+
+    public boolean isUseLockedCells() {
+        return useLockedCells;
     }
 }

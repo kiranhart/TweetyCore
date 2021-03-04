@@ -1525,4 +1525,18 @@ public enum XSound {
             else if (player.isOnline()) player.playSound(updatedLocation, sound, volume, pitch);
         }
     }
+
+    static LinkedHashSet<XSound> all = null;
+
+    public static Set<XSound> getAllValidSounds() {
+        if (all == null) {
+            all = new LinkedHashSet<>();
+            all.addAll(Arrays.asList(values()));
+        }
+        return Collections.unmodifiableSet(all);
+    }
+
+    public static XSound getSound(String name) {
+        return name == null ? null : valueOf(name.toUpperCase());
+    }
 }

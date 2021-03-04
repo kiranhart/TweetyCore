@@ -1,6 +1,8 @@
 package ca.tweetzy.core.gui;
 
 import ca.tweetzy.core.compatibility.XMaterial;
+import ca.tweetzy.core.utils.TextUtils;
+import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -9,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * The current file has been created by Kiran Hart
@@ -95,9 +98,9 @@ public class GuiUtils {
         ItemStack item = mat.parseItem();
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
-            meta.setDisplayName(title);
+            meta.setDisplayName(TextUtils.formatText(WordUtils.capitalize(title)));
             if (lore != null) {
-                meta.setLore(getSafeLore(lore));
+                meta.setLore(getSafeLore(lore).stream().map(TextUtils::formatText).collect(Collectors.toList()));
             } else {
                 meta.setLore(Collections.EMPTY_LIST);
             }
@@ -111,9 +114,9 @@ public class GuiUtils {
         item.setAmount(amount);
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
-            meta.setDisplayName(title);
+            meta.setDisplayName(WordUtils.capitalize(title));
             if (lore != null) {
-                meta.setLore(getSafeLore(lore));
+                meta.setLore(getSafeLore(lore).stream().map(TextUtils::formatText).collect(Collectors.toList()));
             } else {
                 meta.setLore(Collections.EMPTY_LIST);
             }
@@ -301,6 +304,11 @@ public class GuiUtils {
             meta.setDisplayName(title);
             item.setItemMeta(meta);
         }
+        return item;
+    }
+
+    public static ItemStack updateItemType(ItemStack item, XMaterial newMaterial) {
+        item.setType(newMaterial.parseMaterial());
         return item;
     }
 

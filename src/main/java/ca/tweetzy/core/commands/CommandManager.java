@@ -43,7 +43,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
     }
 
     public Set<AbstractCommand> getAllCommands() {
-        HashSet<AbstractCommand> all = new HashSet();
+        HashSet<AbstractCommand> all = new HashSet<>();
         commands.values().stream()
                 .filter(c -> c.parent != null && !all.contains(c.parent))
                 .forEach(c -> {

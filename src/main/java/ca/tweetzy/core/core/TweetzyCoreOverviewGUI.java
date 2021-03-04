@@ -26,17 +26,17 @@ public class TweetzyCoreOverviewGUI extends Gui {
 
         for (int i = 0; i < plugins.size(); i++) {
             final PluginInfo plugin = plugins.get(i);
-            setButton(i, new TItemBuilder(
+            setItem(i, new TItemBuilder(
                     XMaterial.matchXMaterial(plugin.getIcon()).get().parseMaterial())
                     .setName(TextUtils.formatText("&e" + plugin.getName()))
                     .setLore(
                             TextUtils.formatText("&fVersion&f: &a" + plugin.getVersion()),
                             TextUtils.formatText("&fHas Update&F: " + (plugin.isHasUpdate() ? "&a" + plugin.isHasUpdate() : "&c" + plugin.isHasUpdate())),
                             "",
-                            TextUtils.formatText("&eRight Click to edit plugin settings.")
-                    ).toItemStack(), e -> e.player.sendMessage(""));
+                            TextUtils.formatText("&eLeft Click to edit plugin settings.")
+                    ).toItemStack());
 
-            setAction(i, ClickType.RIGHT, e -> e.manager.showGUI(e.player, new PluginConfigGui(plugin.getJavaPlugin(), e.gui)));
+            setAction(i, ClickType.LEFT, e -> e.manager.showGUI(e.player, new PluginConfigGui(plugin.getJavaPlugin(), e.gui)));
         }
     }
 }

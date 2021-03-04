@@ -100,7 +100,7 @@ public class SimplePagedGui extends Gui {
 
         for (int i = startCell; i < (rows - 1) * 9; ++i) {
             final ItemStack item = cellItems.get(cellIndex++);
-            inventory.setItem(i, item != null ? item : blankItem);
+            inventory.setItem(i, item != null ? item : useLockedCells ? blankItem : XMaterial.AIR.parseItem());
         }
         // page markers
         updatePageNavigation();

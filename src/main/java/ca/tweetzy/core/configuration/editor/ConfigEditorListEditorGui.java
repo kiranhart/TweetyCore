@@ -4,6 +4,7 @@ import ca.tweetzy.core.compatibility.XMaterial;
 import ca.tweetzy.core.gui.GuiUtils;
 import ca.tweetzy.core.gui.SimplePagedGui;
 import ca.tweetzy.core.input.ChatPrompt;
+import ca.tweetzy.core.utils.TextUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.event.inventory.ClickType;
 
@@ -20,16 +21,17 @@ public class ConfigEditorListEditorGui extends SimplePagedGui {
     public ConfigEditorListEditorGui(ConfigEditorGui current, String key, List<String> val) {
         super(current);
         this.current = current;
-        this.blankItem = current.getDefaultItem();
+        this.setUseLockedCells(false);
         headerBackItem = footerBackItem = current.getHeaderBackItem();
+
         setTitle(ChatColor.YELLOW + "String List Editor");
         this.setUseHeader(true);
-        this.setItem(4, current.configItem(XMaterial.FILLED_MAP, key, current.getCurrentNode(), key, null));
-        this.setButton(8, GuiUtils.createButtonItem(XMaterial.OAK_DOOR, "Exit"), (event) -> event.player.closeInventory());
+        this.setItem(4, current.configItem(XMaterial.OAK_SIGN, key, current.getCurrentNode(), key, null));
+        this.setButton(8, GuiUtils.createButtonItem(XMaterial.BARRIER, "&cExit"), (event) -> event.player.closeInventory());
         this.values = new ArrayList<>(val);
 
-        this.setButton(8, GuiUtils.createButtonItem(XMaterial.LAVA_BUCKET, ChatColor.RED + "Discard Changes"), (event) -> event.player.closeInventory());
-        this.setButton(0, GuiUtils.createButtonItem(XMaterial.REDSTONE, ChatColor.GREEN + "Save"), (event) -> {
+        this.setButton(8, GuiUtils.createButtonItem(XMaterial.RED_STAINED_GLASS_PANE, ChatColor.RED + "Discard Changes"), (event) -> event.player.closeInventory());
+        this.setButton(0, GuiUtils.createButtonItem(XMaterial.LIME_STAINED_GLASS_PANE, ChatColor.GREEN + "Save"), (event) -> {
             saveChanges = true;
             event.player.closeInventory();
         });
@@ -67,7 +69,7 @@ public class ConfigEditorListEditorGui extends SimplePagedGui {
         int i = 9;
         for (String item : values) {
             final int index = i - 9;
-            setButton(i++, GuiUtils.createButtonItem(XMaterial.PAPER, item, "Right-click to remove"), ClickType.RIGHT, (event) -> {
+            setButton(i++, GuiUtils.createButtonItem(XMaterial.PAPER, TextUtils.formatText(item), "&7Right-click to remove"), ClickType.RIGHT, (event) -> {
                 values.remove(index);
                 redraw();
             });
