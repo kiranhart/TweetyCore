@@ -1,5 +1,6 @@
 package ca.tweetzy.core.locale;
 
+import ca.tweetzy.core.TweetyCore;
 import ca.tweetzy.core.configuration.Config;
 import ca.tweetzy.core.configuration.ConfigSection;
 import ca.tweetzy.core.utils.TextUtils;

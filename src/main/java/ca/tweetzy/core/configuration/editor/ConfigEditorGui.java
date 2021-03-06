@@ -1,5 +1,7 @@
 package ca.tweetzy.core.configuration.editor;
 
+import ca.tweetzy.core.TweetyCore;
+import ca.tweetzy.core.TweetyPlugin;
 import ca.tweetzy.core.compatibility.XMaterial;
 import ca.tweetzy.core.compatibility.XSound;
 import ca.tweetzy.core.configuration.Config;
@@ -7,6 +9,7 @@ import ca.tweetzy.core.gui.Gui;
 import ca.tweetzy.core.gui.GuiUtils;
 import ca.tweetzy.core.gui.SimplePagedGui;
 import ca.tweetzy.core.input.ChatPrompt;
+import ca.tweetzy.core.locale.Message;
 import ca.tweetzy.core.utils.TextUtils;
 import ca.tweetzy.core.utils.items.ItemUtils;
 import org.bukkit.ChatColor;
@@ -18,6 +21,7 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,11 +49,18 @@ public class ConfigEditorGui extends SimplePagedGui {
     List<String> sections = new ArrayList<>();
     List<String> settings = new ArrayList<>();
 
-    protected ConfigEditorGui(Player player, JavaPlugin plugin, Gui parent, String file, MemoryConfiguration config) {
-        this(player, plugin, parent, file, config, config);
+    final String savePrefix;
+
+    public ConfigEditorGui(Player player, JavaPlugin plugin, Gui parent, String file, MemoryConfiguration config, String savePrefix) {
+        this(player, plugin, parent, file, config, config, savePrefix);
     }
 
-    protected ConfigEditorGui(Player player, JavaPlugin plugin, Gui parent, String file, MemoryConfiguration config, ConfigurationSection node) {
+    public ConfigEditorGui(Player player, JavaPlugin plugin, Gui parent, String file, String title, String savePrefix, MemoryConfiguration config, ConfigurationSection node) {
+        this(player, plugin, parent, file, config, node, savePrefix);
+        this.setTitle(TextUtils.formatText(title));
+    }
+
+    public ConfigEditorGui(Player player, JavaPlugin plugin, Gui parent, String file, MemoryConfiguration config, ConfigurationSection node, String savePrefix) {
         super(parent);
         this.player = player;
         this.plugin = plugin;
@@ -57,9 +68,11 @@ public class ConfigEditorGui extends SimplePagedGui {
         this.config = config;
         this.node = node;
         this.blankItem = XMaterial.AIR.parseItem();
+        this.savePrefix = savePrefix;
+
 
         if (!(parent instanceof ConfigEditorGui)) {
-            setOnClose((gui) -> save());
+            setOnClose((gui) -> save(this.savePrefix));
         } else {
             setOnClose((gui) -> ((ConfigEditorGui) parent).edits |= edits);
         }
@@ -91,7 +104,7 @@ public class ConfigEditorGui extends SimplePagedGui {
         int index = 9;
         for (final String sectionKey : sections) {
             setButton(index++, configItem(XMaterial.WRITABLE_BOOK, ChatColor.YELLOW + sectionKey, node, sectionKey, "&7Click to open this section"),
-                    (event) -> event.manager.showGUI(event.player, new ConfigEditorGui(player, plugin, this, file, config, node.getConfigurationSection(sectionKey))));
+                    (event) -> event.manager.showGUI(event.player, new ConfigEditorGui(player, plugin, this, file, config, node.getConfigurationSection(sectionKey), this.savePrefix)));
         }
 
         // now display individual settings
@@ -277,7 +290,7 @@ public class ConfigEditorGui extends SimplePagedGui {
         updateValue(clickCell, path);
     }
 
-    void save() {
+    void save(String savePrefix) {
         if (!edits) {
             return;
         }
@@ -297,7 +310,7 @@ public class ConfigEditorGui extends SimplePagedGui {
             return;
         }
         plugin.reloadConfig();
-        player.sendMessage(ChatColor.GREEN + "Config " + file + " saved!");
+        player.sendMessage(TextUtils.formatText(savePrefix.length() != 0 ? savePrefix + " " + "&aSaved " + file + "!" : "" + "&aSaved " + file + "!"));
     }
 
     private boolean isNumber(Object value) {

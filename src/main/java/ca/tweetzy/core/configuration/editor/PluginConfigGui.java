@@ -32,7 +32,7 @@ public class PluginConfigGui extends SimplePagedGui {
         this(plugin, null);
     }
 
-    public PluginConfigGui(TweetyPlugin plugin, Gui parent) {
+    public PluginConfigGui(TweetyPlugin plugin, Gui parent, String prefix) {
         super(parent);
         this.plugin = plugin;
 
@@ -44,14 +44,14 @@ public class PluginConfigGui extends SimplePagedGui {
                 configs.put(cfg.getFile().getName(), cfg);
             }
         }
-        init();
+        init(prefix);
     }
 
-    public PluginConfigGui(JavaPlugin plugin) {
-        this(plugin, null);
+    public PluginConfigGui(JavaPlugin plugin, String prefix) {
+        this(plugin, null, prefix);
     }
 
-    public PluginConfigGui(JavaPlugin plugin, Gui parent) {
+    public PluginConfigGui(JavaPlugin plugin, Gui parent, String prefix) {
         super(parent);
         this.plugin = plugin;
 
@@ -76,10 +76,10 @@ public class PluginConfigGui extends SimplePagedGui {
         } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
             // I guess not!
         }
-        init();
+        init(prefix);
     }
 
-    private void init() {
+    private void init(String prefix) {
         this.blankItem = GuiUtils.getBorderItem(XMaterial.CYAN_STAINED_GLASS_PANE);
 
         // decorate header
@@ -92,7 +92,7 @@ public class PluginConfigGui extends SimplePagedGui {
         int i = 9;
         for (Map.Entry<String, MemoryConfiguration> config : configs.entrySet()) {
             this.setButton(i++, GuiUtils.createButtonItem(XMaterial.BOOK, ChatColor.YELLOW + config.getKey(), "&7Click to edit this config"),
-                    (event) -> event.manager.showGUI(event.player, new ConfigEditorGui(event.player, plugin, this, config.getKey(), config.getValue())));
+                    (event) -> event.manager.showGUI(event.player, new ConfigEditorGui(event.player, plugin, this, config.getKey(), config.getValue(), prefix)));
         }
     }
 }

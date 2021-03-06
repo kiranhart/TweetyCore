@@ -321,6 +321,25 @@ public class Gui {
     }
 
     @NotNull
+    public Gui setItems(int[] cells, @Nullable ItemStack item) {
+        for (int i : cells) {
+            cellItems.put(i, item);
+            if (inventory != null && i >= 0 && i < inventory.getSize()) {
+                inventory.setItem(i, item);
+            }
+        }
+        return this;
+    }
+
+    @NotNull
+    public Gui setItems(int cellFirst, int cellLast, @Nullable ItemStack item) {
+        for (int cell = cellFirst; cell <= cellLast; ++cell) {
+            setItem(cell, item);
+        }
+        return this;
+    }
+
+    @NotNull
     public Gui mirrorFill(int row, int col, boolean mirrorRow, boolean mirrorCol, ItemStack item) {
         setItem(row, col, item);
         if (mirrorRow)
@@ -773,8 +792,6 @@ public class Gui {
             final ItemStack item = cellItems.get(i);
             inventory.setItem(i, item != null ? item : useLockedCells ? (unlockedCells.getOrDefault(i, false) ? AIR : blankItem) : AIR);
         }
-
-
         return inventory;
     }
 

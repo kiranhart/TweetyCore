@@ -36,7 +36,7 @@ public class TweetzyCoreOverviewGUI extends Gui {
                             TextUtils.formatText("&eLeft Click to edit plugin settings.")
                     ).toItemStack());
 
-            setAction(i, ClickType.LEFT, e -> e.manager.showGUI(e.player, new PluginConfigGui(plugin.getJavaPlugin(), e.gui)));
+            setAction(i, ClickType.LEFT, e -> e.manager.showGUI(e.player, new PluginConfigGui(plugin.getJavaPlugin(), e.gui, "&8[&eTweetyCore&8]")));
         }
     }
 }
