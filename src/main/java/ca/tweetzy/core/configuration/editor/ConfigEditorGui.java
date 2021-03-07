@@ -1,7 +1,5 @@
 package ca.tweetzy.core.configuration.editor;
 
-import ca.tweetzy.core.TweetyCore;
-import ca.tweetzy.core.TweetyPlugin;
 import ca.tweetzy.core.compatibility.XMaterial;
 import ca.tweetzy.core.compatibility.XSound;
 import ca.tweetzy.core.configuration.Config;
@@ -9,10 +7,11 @@ import ca.tweetzy.core.gui.Gui;
 import ca.tweetzy.core.gui.GuiUtils;
 import ca.tweetzy.core.gui.SimplePagedGui;
 import ca.tweetzy.core.input.ChatPrompt;
-import ca.tweetzy.core.locale.Message;
 import ca.tweetzy.core.utils.TextUtils;
 import ca.tweetzy.core.utils.items.ItemUtils;
+import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -21,15 +20,13 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 /**
  * The current file has been created by Kiran Hart
@@ -45,7 +42,7 @@ public class ConfigEditorGui extends SimplePagedGui {
     final ConfigurationSection node;
     final Player player;
     Method configSection_getCommentString = null;
-    boolean edits = false;
+    public boolean edits = false;
     List<String> sections = new ArrayList<>();
     List<String> settings = new ArrayList<>();
 
@@ -142,21 +139,31 @@ public class ConfigEditorGui extends SimplePagedGui {
 
                 if (XMaterial.contains(((String) val).toUpperCase())) {
                     setButton(index, configItem(XMaterial.CRAFTING_TABLE, ChatColor.YELLOW + settingKey, node, settingKey, val.toString(), "&7Click to edit this setting"),
-                        (event) -> {
-                            SimplePagedGui paged = new SimplePagedGui(this);
-                            paged.setTitle(ChatColor.YELLOW + settingKey);
-                            paged.setUseLockedCells(true);
-                            paged.setHeaderBackItem(headerBackItem).setFooterBackItem(footerBackItem).setDefaultItem(blankItem);
-                            paged.setItem(4, configItem(XMaterial.OAK_SIGN, settingKey, node, settingKey, "&7Choose an item to change this value to"));
-                            int i = 9;
-                            for (XMaterial mat : XMaterial.getAllValidItemMaterials()) {
-                                paged.setButton(i++, GuiUtils.createButtonItem(mat, mat.name()), ClickType.LEFT, (matEvent) -> {
-                                    setMaterial(event.slot, settingKey, matEvent.clickedItem);
-                                    matEvent.player.closeInventory();
-                                });
-                            }
-                            event.manager.showGUI(event.player, paged);
-                        });
+                            (event) -> {
+                                SimplePagedGui paged = new SimplePagedGui(this);
+                                paged.setTitle(ChatColor.YELLOW + settingKey);
+                                paged.setUseLockedCells(true);
+                                paged.setHeaderBackItem(headerBackItem).setFooterBackItem(footerBackItem).setDefaultItem(blankItem);
+                                paged.setItem(4, configItem(XMaterial.OAK_SIGN, settingKey, node, settingKey, "&7Choose an item to change this value to"));
+                                int i = 9;
+
+                                List<Material> supportedVersionItems = new ArrayList<>();
+                                for (XMaterial mat : XMaterial.getAllValidItemMaterials()) {
+                                    if (mat.isSupported() && mat.parseMaterial() != null) {
+                                        supportedVersionItems.add(mat.parseMaterial());
+                                    }
+                                }
+                                supportedVersionItems = supportedVersionItems.stream().distinct().collect(Collectors.toList());
+
+                                for (Material material : supportedVersionItems) {
+                                    paged.setButton(i, GuiUtils.createButtonItem(material, material.name().toLowerCase().replace("_", " ")), ClickType.LEFT, (matEvent) -> {
+                                        setMaterial(event.slot, settingKey, matEvent.clickedItem);
+                                        matEvent.player.closeInventory();
+                                    });
+                                    i++;
+                                }
+                                event.manager.showGUI(event.player, paged);
+                            });
                 } else if (XSound.contains(((String) val).toUpperCase())) {
                     setButton(index, configItem(XMaterial.MUSIC_DISC_13, ChatColor.YELLOW + settingKey, node, settingKey, val.toString(), "&7Click to edit this setting"),
                             (event) -> {
@@ -167,10 +174,12 @@ public class ConfigEditorGui extends SimplePagedGui {
                                 paged.setItem(4, configItem(XMaterial.OAK_SIGN, settingKey, node, settingKey, "&7Choose an item to change this value to"));
                                 int i = 9;
                                 for (XSound sound : XSound.getAllValidSounds()) {
-                                    paged.setButton(i++, GuiUtils.createButtonItem(XMaterial.MUSIC_DISC_CHIRP, sound.toString()), ClickType.LEFT, (matEvent) -> {
-                                        setSound(event.slot, settingKey, sound);
-                                        matEvent.player.closeInventory();
-                                    });
+                                    if (sound.isSupported()) {
+                                        paged.setButton(i++, GuiUtils.createButtonItem(XMaterial.MUSIC_DISC_CHIRP, WordUtils.capitalize(sound.name().replace('_', ' ').toLowerCase(Locale.ENGLISH))), ClickType.LEFT, (matEvent) -> {
+                                            setSound(event.slot, settingKey, sound);
+                                            matEvent.player.closeInventory();
+                                        });
+                                    }
                                 }
                                 event.manager.showGUI(event.player, paged);
                             });
@@ -267,7 +276,7 @@ public class ConfigEditorGui extends SimplePagedGui {
     }
 
     void setMaterial(int clickCell, String path, ItemStack item) {
-        XMaterial mat = XMaterial.matchXMaterial(item);
+        XMaterial mat = item == null ? XMaterial.PAPER : XMaterial.matchXMaterial(item);
         if (mat == null) {
             node.set(path, XMaterial.STONE.name());
         } else {
@@ -290,7 +299,7 @@ public class ConfigEditorGui extends SimplePagedGui {
         updateValue(clickCell, path);
     }
 
-    void save(String savePrefix) {
+    public void save(String savePrefix) {
         if (!edits) {
             return;
         }
@@ -353,7 +362,7 @@ public class ConfigEditorGui extends SimplePagedGui {
             try {
                 Object comment = configSection_getCommentString.invoke(node, path);
                 if (comment != null) {
-                    info = (TextUtils.formatText("&e" + value) + "\n\n" + TextUtils.formatText("&7" + comment.toString())).split("\n");
+                    info = (TextUtils.formatText(TextUtils.containsColorCode(value) ? value : "&e" + value) + "\n\n" + TextUtils.formatText("&7" + comment.toString())).split("\n");
                     for (int i = 0; i < info.length; i++) {
                         info[i] = TextUtils.formatText("&7" + info[i]);
                     }
@@ -361,6 +370,7 @@ public class ConfigEditorGui extends SimplePagedGui {
             } catch (Exception ex) {
             }
         }
-        return GuiUtils.createButtonItem(type, name, info != null ? info : (def != null ? (TextUtils.formatText("&e" + value) + "\n" + TextUtils.formatText("&7" + def)).split("\n") : null));
+        return GuiUtils.createButtonItem(type, name, info != null ? info : (def != null ? (TextUtils.formatText(TextUtils.containsColorCode(value) ? value : "&e" + value) + "\n" + TextUtils.formatText("&7" + def)).split("\n") : null));
     }
+
 }

@@ -4,13 +4,11 @@ import ca.tweetzy.core.compatibility.XMaterial;
 import ca.tweetzy.core.utils.TextUtils;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -96,6 +94,21 @@ public class GuiUtils {
 
     public static ItemStack createButtonItem(XMaterial mat, String title, String... lore) {
         ItemStack item = mat.parseItem();
+        ItemMeta meta = item.getItemMeta();
+        if (meta != null) {
+            meta.setDisplayName(TextUtils.formatText(WordUtils.capitalize(title)));
+            if (lore != null) {
+                meta.setLore(getSafeLore(lore).stream().map(TextUtils::formatText).collect(Collectors.toList()));
+            } else {
+                meta.setLore(Collections.EMPTY_LIST);
+            }
+            item.setItemMeta(meta);
+        }
+        return item;
+    }
+
+    public static ItemStack createButtonItem(Material mat, String title, String... lore) {
+        ItemStack item = new ItemStack(mat, 1);
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
             meta.setDisplayName(TextUtils.formatText(WordUtils.capitalize(title)));

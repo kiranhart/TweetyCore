@@ -10,6 +10,9 @@ import java.nio.charset.CharsetDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.bukkit.ChatColor;
 
 public class TextUtils {
@@ -69,6 +72,12 @@ public class TextUtils {
             return "";
         }
         return s.replaceAll(ChatColor.COLOR_CHAR + ";" + ChatColor.COLOR_CHAR + "|" + ChatColor.COLOR_CHAR, "");
+    }
+
+    public static boolean containsColorCode(String string) {
+        Pattern rex = Pattern.compile("§|&([0-fk-or])");
+        Matcher matcher = rex.matcher(string);
+        return matcher.find();
     }
 
     protected static final List<Charset> supportedCharsets = new ArrayList();
