@@ -4,24 +4,14 @@ import ca.tweetzy.core.commands.CommandManager;
 import ca.tweetzy.core.core.PluginInfo;
 import ca.tweetzy.core.core.TweetzyCoreCommand;
 import ca.tweetzy.core.core.TweetzyCoreInfoCommand;
-import ca.tweetzy.core.inventory.TInventory;
 import ca.tweetzy.core.utils.TextUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Level;
 
 /**
@@ -35,7 +25,8 @@ public class TweetyCore {
     private final static String prefix = "[TweetyCore]";
     private final static String cPrefix = "&8[&3TweetyCore&8]";
     private static String pluginPrefix = "[TweetyCore]";
-    private final static int coreRevision = 1;
+    private final static int coreRevision = 2;
+    private final static String version = TweetyPlugin.instance.getDescription().getVersion();
 
     private CommandManager commandManager;
     private JavaPlugin piggybackedPlugin;
@@ -62,14 +53,20 @@ public class TweetyCore {
                 if (clazz.getSimpleName().equalsIgnoreCase("TweetyCore")) {
                     try {
 
-                        int otherVersion;
+                        int otherCoreVersion;
+                        String otherVersion;
                         try {
-                            otherVersion = (int) clazz.getMethod("getCoreVersion").invoke(null);
+                            otherCoreVersion = (int) clazz.getMethod("getCoreVersion").invoke(null);
+                            otherVersion = (String) clazz.getMethod("getVersion").invoke(null);
                         } catch (Exception ignore) {
-                            otherVersion = -1;
+                            otherCoreVersion = -1;
+                            otherVersion = "";
                         }
 
-                        if (otherVersion >= getCoreVersion()) {
+                        int[] thisVersionSplit = Arrays.stream(getVersion().split("\\.")).mapToInt(Integer::parseInt).toArray();
+                        int[] otherVersionSplit = Arrays.stream(otherVersion.split("\\.")).mapToInt(Integer::parseInt).toArray();
+
+                        if (otherCoreVersion >= getCoreVersion() || otherVersionSplit[0] >= thisVersionSplit[0] || otherVersionSplit[1] >= thisVersionSplit[1] || otherVersionSplit[2] >= thisVersionSplit[2]) {
                             clazz.getMethod("registerPlugin", JavaPlugin.class, int.class, String.class).invoke(null, plugin, pluginID, icon);
                         } else {
                             List otherPlugins = (List) clazz.getMethod("getPlugins").invoke(null);
@@ -139,6 +136,10 @@ public class TweetyCore {
         return coreRevision;
     }
 
+    public static String getVersion() {
+        return version;
+    }
+
     public static String getPrefix() {
         return prefix + " ";
     }
@@ -177,42 +178,4 @@ public class TweetyCore {
         return INSTANCE;
     }
 
-    public static void initEvents(JavaPlugin plugin) {
-        plugin.getServer().getPluginManager().registerEvents(new Listener() {
-
-            @EventHandler
-            public void onOpen(InventoryOpenEvent e) {
-                try {
-                    if (e.getInventory().getHolder() instanceof TInventory) {
-                        TInventory gui = (TInventory) e.getInventory().getHolder();
-                        gui.onOpen(e);
-                    }
-                } catch (Exception ex) {
-                }
-            }
-
-            @EventHandler
-            public void onClick(InventoryClickEvent e) {
-                try {
-                    if (e.getInventory().getHolder() instanceof TInventory) {
-                        TInventory gui = (TInventory) e.getInventory().getHolder();
-                        gui.onClick(e);
-                        gui.onClick(e, e.getRawSlot());
-                    }
-                } catch (Exception ex) {
-                }
-            }
-
-            @EventHandler
-            public void onClose(InventoryCloseEvent e) {
-                try {
-                    if (e.getInventory().getHolder() instanceof TInventory) {
-                        TInventory gui = (TInventory) e.getInventory().getHolder();
-                        gui.onClose(e);
-                    }
-                } catch (Exception ex) {
-                }
-            }
-        }, plugin);
-    }
 }
