@@ -2,8 +2,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>ca.tweetzy</groupId>
-  <artifactId>TweetyCore</artifactId>
-  <version>1.0.0</version>
+  <artifactId>tweetycore</artifactId>
+  <version>2.0.0</version>
   <build>
     <sourceDirectory>./src/main/java</sourceDirectory>
     <defaultGoal>clean install</defaultGoal>
@@ -126,9 +126,23 @@
       <version>1.7.25</version>
       <scope>compile</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-deploy-plugin</artifactId>
+      <version>2.8.2</version>
+      <scope>compile</scope>
+    </dependency>
   </dependencies>
+  <distributionManagement>
+    <repository>
+      <id>github</id>
+      <name>GitHub kiranhart Apache Maven Packages</name>
+      <url>https://maven.pkg.github.com/kiranhart/TweetyCore</url>
+    </repository>
+  </distributionManagement>
   <properties>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <github.global.server>github</github.global.server>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 </project>

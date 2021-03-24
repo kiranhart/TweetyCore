@@ -25,9 +25,6 @@ public abstract class TweetyPlugin extends JavaPlugin {
     protected ConsoleCommandSender console = Bukkit.getConsoleSender();
     private boolean emergencyStop = false;
 
-    public static TweetyPlugin instance;
-
-
     public abstract void onPluginLoad();
 
     public abstract void onPluginEnable();
@@ -69,7 +66,6 @@ public abstract class TweetyPlugin extends JavaPlugin {
     @Override
     public final void onLoad() {
         try {
-            instance = this;
             onPluginLoad();
         } catch (Throwable t) {
             Bukkit.getLogger().log(Level.SEVERE,

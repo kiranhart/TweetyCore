@@ -26,7 +26,6 @@ public class TweetyCore {
     private final static String cPrefix = "&8[&3TweetyCore&8]";
     private static String pluginPrefix = "[TweetyCore]";
     private final static int coreRevision = 2;
-    private final static String version = TweetyPlugin.instance.getDescription().getVersion();
 
     private CommandManager commandManager;
     private JavaPlugin piggybackedPlugin;
@@ -54,19 +53,13 @@ public class TweetyCore {
                     try {
 
                         int otherCoreVersion;
-                        String otherVersion;
                         try {
                             otherCoreVersion = (int) clazz.getMethod("getCoreVersion").invoke(null);
-                            otherVersion = (String) clazz.getMethod("getVersion").invoke(null);
                         } catch (Exception ignore) {
                             otherCoreVersion = -1;
-                            otherVersion = "";
                         }
 
-                        int[] thisVersionSplit = Arrays.stream(getVersion().split("\\.")).mapToInt(Integer::parseInt).toArray();
-                        int[] otherVersionSplit = Arrays.stream(otherVersion.split("\\.")).mapToInt(Integer::parseInt).toArray();
-
-                        if (otherCoreVersion >= getCoreVersion() || otherVersionSplit[0] >= thisVersionSplit[0] || otherVersionSplit[1] >= thisVersionSplit[1] || otherVersionSplit[2] >= thisVersionSplit[2]) {
+                        if (otherCoreVersion >= getCoreVersion()) {
                             clazz.getMethod("registerPlugin", JavaPlugin.class, int.class, String.class).invoke(null, plugin, pluginID, icon);
                         } else {
                             List otherPlugins = (List) clazz.getMethod("getPlugins").invoke(null);
@@ -134,10 +127,6 @@ public class TweetyCore {
 
     public static int getCoreVersion() {
         return coreRevision;
-    }
-
-    public static String getVersion() {
-        return version;
     }
 
     public static String getPrefix() {

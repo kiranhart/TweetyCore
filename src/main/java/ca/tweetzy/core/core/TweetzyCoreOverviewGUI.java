@@ -32,8 +32,9 @@ public class TweetzyCoreOverviewGUI extends Gui {
                     .setLore(
                             TextUtils.formatText("&fVersion&f: &a" + plugin.getVersion()),
                             TextUtils.formatText("&fHas Update&F: " + (plugin.isHasUpdate() ? "&a" + plugin.isHasUpdate() : "&c" + plugin.isHasUpdate())),
+                            TextUtils.formatText(String.format("&fCore Version: &a%d", TweetyCore.getCoreVersion())),
                             "",
-                            TextUtils.formatText("&bLeft Click to edit plugin settings.")
+                            TextUtils.formatText("&eLeft Click to edit plugin settings.")
                     ).toItemStack());
 
             setAction(i, ClickType.LEFT, e -> e.manager.showGUI(e.player, new PluginConfigGui(plugin.getJavaPlugin(), e.gui, "&8[&eTweetyCore&8]")));
