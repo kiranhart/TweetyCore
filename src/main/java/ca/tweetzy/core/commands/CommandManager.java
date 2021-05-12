@@ -302,4 +302,20 @@ public class CommandManager implements CommandExecutor, TabCompleter {
             e.printStackTrace();
         }
     }
+
+    public void setMsg_noCommand(String msg_noCommand) {
+        this.msg_noCommand = msg_noCommand;
+    }
+
+    public void setMsg_noConsole(String msg_noConsole) {
+        this.msg_noConsole = msg_noConsole;
+    }
+
+    public void setMsg_noPerms(String msg_noPerms) {
+        this.msg_noPerms = msg_noPerms;
+    }
+
+    public void setMsg_syntaxError(List<String> msg_syntaxError) {
+        this.msg_syntaxError = msg_syntaxError;
+    }
 }

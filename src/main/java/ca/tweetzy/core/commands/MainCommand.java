@@ -1,8 +1,9 @@
 package ca.tweetzy.core.commands;
 
-import ca.tweetzy.core.input.ClickableChat;
+import ca.tweetzy.core.chat.ChatMessage;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -59,11 +60,10 @@ public class MainCommand extends AbstractCommand {
         if (header != null) {
             sender.sendMessage(header);
         } else {
-            sender.sendMessage(String.format("%s%s %s» %sVersion %s",
-                    ChatColor.GOLD.toString() + ChatColor.BOLD, plugin.getDescription().getName(),
-                    ChatColor.DARK_GRAY.toString(), ChatColor.GRAY.toString(), plugin.getDescription().getVersion()
-            ));
+            new ChatMessage().fromText(String.format("#00ce74&l%s &8» &7Version %s", plugin.getDescription().getName(), plugin.getDescription().getVersion()), sender instanceof ConsoleCommandSender).sendTo(sender);
         }
+        sender.sendMessage(ChatColor.DARK_GRAY + "- " + ChatColor.YELLOW + "/tweetzy" + ChatColor.GRAY + " - Opens the Tweetzy Config Editor");
+        sender.sendMessage("");
 
         if (nestedCommands != null) {
             List<String> commands = nestedCommands.children.values().stream().distinct().map(c -> c.getCommands().get(0)).collect(Collectors.toList());
@@ -79,15 +79,10 @@ public class MainCommand extends AbstractCommand {
                 if (!isPlayer) {
                     sender.sendMessage(ChatColor.DARK_GRAY + "- " + ChatColor.YELLOW + cmd.getSyntax() + ChatColor.GRAY + " - " + cmd.getDescription());
                 } else if (cmd.getPermissionNode() == null || sender.hasPermission(cmd.getPermissionNode())) {
-//                    if (this.clickable) {
-//                        ClickableChat msg = new ClickableChat();
-//                        final String c = "/" + command + " ";
-//                        msg.addMessage(ChatColor.DARK_GRAY + "- ")
-//                                .addPromptCommand(ChatColor.YELLOW + c + cmd.getSyntax(), ChatColor.YELLOW + c + cmdStr, c + cmdStr)
-//                                .addMessage(ChatColor.GRAY + " - " + cmd.getDescription());
-//                        msg.sendTo((Player) sender);
-//                    }
-                    sender.sendMessage(ChatColor.DARK_GRAY + "- " + ChatColor.YELLOW + cmd.getSyntax() + ChatColor.GRAY + " - " + cmd.getDescription());
+                    ChatMessage chatMessage = new ChatMessage();
+                    final String c = "/" + command + " ";
+                    chatMessage.addMessage(ChatColor.DARK_GRAY + "- ").addPromptCommand(ChatColor.YELLOW + c + cmd.getSyntax(), ChatColor.YELLOW + c + cmdStr, c + cmdStr).addMessage(ChatColor.GRAY + " - " + cmd.getDescription());
+                    chatMessage.sendTo((Player) sender);
                 }
             }
         }

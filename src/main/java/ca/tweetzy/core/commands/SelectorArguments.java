@@ -71,10 +71,6 @@ public class SelectorArguments {
             if (s.contains("=")) {
                 String[] v = s.split("=");
                 if (v[0].equals("distance")) {
-                    // 10 = d == 10
-                    // 10..12 = d > 10 && d <= 12
-                    // 5.. = d >= 5
-                    // ..5 = d <= 15
                     Matcher distGroup = selectorRangePattern.matcher(v[1]);
                     if (distGroup.find()) {
                         if (distGroup.group(1) != null) {
@@ -89,33 +85,8 @@ public class SelectorArguments {
                 } else if (v[0].equals("type")) {
                     entityType = EntityNamespace.minecraftToBukkit(v[1]);
                 }
-                // more arguments can be parsed here (TODO)
             }
         }
-        /*
-         advancements 	Advancement earned by entity.
-         distance 	Distance to entity.
-         dx         Entities between x and x + dx.
-         dy         Entities between y and y + dy.
-         dz         Entities between z and z + dz.
-         gamemode 	Players with gamemode. It can be one of the following values: adventure, creative, spectator, survival, !adventure, !creative, !spectator, !survival
-         level      Experience level. It must be an integer value that is 0 or greater.
-         limit      Maximum number of entities to target. It must be an integer value that is 1 or greater.
-         name       Entity name.
-         nbt        NBT tag.
-         scores 	Score.
-         sort       Sort the entities. It must be one of the following values: arbitrary, furthest, nearest, random
-         tag        Scoreboard tag.
-         team       Entities on team.
-         type       Entity type (target must be the specified entity type - https://www.digminecraft.com/lists/entity_list_pc.php ).
-         x          Entity's x-coordinate position.
-         x_rotation Entity's x rotation (vertical rotation).
-         y          Entity's y-coordinate position.
-         y_rotation Entity's y rotation (horizontal rotation).
-         z          Entity's z-coordinate position.
-         target selector arguments are case-sensitive
-         @e[type=cow,limit=5]
-         */
     }
 
     public Collection<Entity> getSelection() {

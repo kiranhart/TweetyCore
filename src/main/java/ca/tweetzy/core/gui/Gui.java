@@ -5,6 +5,7 @@ import ca.tweetzy.core.compatibility.XMaterial;
 import ca.tweetzy.core.compatibility.XSound;
 import ca.tweetzy.core.gui.events.*;
 import ca.tweetzy.core.gui.methods.*;
+import ca.tweetzy.core.utils.TextUtils;
 import ca.tweetzy.core.utils.items.ItemUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -801,10 +802,10 @@ public class Gui {
         switch (t) {
             case DISPENSER:
             case HOPPER:
-                inventory = new GuiHolder(guiManager, this).newInventory(t, title == null ? "" : trimTitle(title));
+                inventory = new GuiHolder(guiManager, this).newInventory(t, title == null ? "" : TextUtils.formatText(trimTitle(title)));
                 break;
             default:
-                inventory = new GuiHolder(guiManager, this).newInventory(rows * 9, title == null ? "" : trimTitle(title));
+                inventory = new GuiHolder(guiManager, this).newInventory(rows * 9, title == null ? "" : TextUtils.formatText(trimTitle(title)));
         }
     }
 

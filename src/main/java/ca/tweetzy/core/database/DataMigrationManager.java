@@ -34,7 +34,12 @@ public class DataMigrationManager {
             int currentMigration = -1;
             boolean migrationsExist;
 
-            String query = "SHOW TABLES LIKE ?";
+            String query;
+            if (this.databaseConnector instanceof SQLiteConnector) {
+                query = "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?";
+            } else {
+                query = "SHOW TABLES LIKE ?";
+            }
 
             try (PreparedStatement statement = connection.prepareStatement(query)) {
                 statement.setString(1, this.getMigrationsTableName());
