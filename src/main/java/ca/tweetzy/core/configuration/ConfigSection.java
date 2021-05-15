@@ -647,14 +647,14 @@ public class ConfigSection extends MemoryConfiguration {
     @Nullable
     public XMaterial getMaterial(@NotNull String path) {
         String val = getString(path);
-        XMaterial mat = val != null ? XMaterial.matchXMaterial(val).get() : null;
+        XMaterial mat = val != null ? XMaterial.getMaterial(val) : null;
         return mat;
     }
 
     @Nullable
     public XMaterial getMaterial(@NotNull String path, @Nullable XMaterial def) {
         String val = getString(path);
-        XMaterial mat = val != null ? XMaterial.matchXMaterial(val).get() : null;
+        XMaterial mat = val != null ? XMaterial.getMaterial(val) : null;
         return mat != null ? mat : def;
     }
 

@@ -7,29 +7,29 @@ public interface DataStoreObject<T> {
     /**
      * @return a unique hashable instance of T to store this value under
      */
-    T getKey();
+    public abstract T getKey();
 
     /**
      * @return a unique identifier for saving this value with
      */
-    String getConfigKey();
+    public abstract String getConfigKey();
 
     /**
      * Save this data to a ConfigurationSection
      *
      * @param sec
      */
-    void saveToSection(ConfigurationSection sec);
+    public abstract void saveToSection(ConfigurationSection sec);
 
     /**
      * @return true if this data has changed from the state saved to file
      */
-    boolean hasChanged();
+    public boolean hasChanged();
 
     /**
      * Mark this data as needing a save or not
      *
      * @param isChanged
      */
-    void setChanged(boolean isChanged);
+    public void setChanged(boolean isChanged);
 }

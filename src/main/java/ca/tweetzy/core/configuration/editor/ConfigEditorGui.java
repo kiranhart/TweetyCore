@@ -24,7 +24,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
@@ -362,7 +365,7 @@ public class ConfigEditorGui extends SimplePagedGui {
             try {
                 Object comment = configSection_getCommentString.invoke(node, path);
                 if (comment != null) {
-                    info = (TextUtils.formatText(TextUtils.containsColorCode(value) ? value : "&e" + value) + "\n\n" + TextUtils.formatText("&7" + comment.toString())).split("\n");
+                    info = (TextUtils.formatText("&e" + value) + "\n\n" + TextUtils.formatText("&7" + comment.toString())).split("\n");
                     for (int i = 0; i < info.length; i++) {
                         info[i] = TextUtils.formatText("&7" + info[i]);
                     }
@@ -370,7 +373,7 @@ public class ConfigEditorGui extends SimplePagedGui {
             } catch (Exception ex) {
             }
         }
-        return GuiUtils.createButtonItem(type, name, info != null ? info : (def != null ? (TextUtils.formatText(TextUtils.containsColorCode(value) ? value : "&e" + value) + "\n" + TextUtils.formatText("&7" + def)).split("\n") : null));
+        return GuiUtils.createButtonItem(type, name, info != null ? info : (def != null ? (TextUtils.formatText("&e" + value) + "\n" + TextUtils.formatText("&7" + def)).split("\n") : null));
     }
 
 }

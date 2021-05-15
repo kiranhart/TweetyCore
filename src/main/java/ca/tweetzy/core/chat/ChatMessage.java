@@ -21,12 +21,6 @@ import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * The current file has been created by Kiran Hart
- * Date Created: November 29 2020
- * Time Created: 8:23 p.m.
- * Usage of any code found within this class is prohibited unless given explicit permission otherwise
- */
 public class ChatMessage {
 
     private static final Gson gson = new GsonBuilder().create();
