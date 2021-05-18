@@ -11,32 +11,56 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class PluginInfo {
 
-    protected final JavaPlugin javaPlugin;
-    protected final int pluginId;
-    protected final String coreIcon;
-    protected final String coreLibraryVersion;
-    protected final XMaterial icon;
-    private boolean hasUpdate = false;
-    private String latestVersion;
+    private final JavaPlugin javaPlugin;
 
-    public PluginInfo(JavaPlugin javaPlugin, int pluginId, String icon, String coreLibraryVersion) {
+    private String name;
+    private String version;
+    private String icon;
+    private int id;
+    private boolean hasUpdate;
+
+    public PluginInfo(JavaPlugin javaPlugin, int id, String icon) {
+        this(javaPlugin, javaPlugin.getDescription().getName(), javaPlugin.getDescription().getVersion(), icon);
+        this.id = id;
+    }
+
+    public PluginInfo(JavaPlugin javaPlugin, String name, String version, String icon) {
         this.javaPlugin = javaPlugin;
-        this.pluginId = pluginId;
-        this.coreIcon = icon;
-        this.icon = XMaterial.getMaterial(icon);
-        this.coreLibraryVersion = coreLibraryVersion;
+        this.name = name;
+        this.version = version;
+        this.icon = icon;
+        this.hasUpdate = false;
     }
 
-    public String getLatestVersion() {
-        return latestVersion;
+    public JavaPlugin getJavaPlugin() {
+        return javaPlugin;
     }
 
-    public void setLatestVersion(String latestVersion) {
-        this.latestVersion = latestVersion;
-        hasUpdate = latestVersion != null && !latestVersion.isEmpty() && !javaPlugin.getDescription().getVersion().equalsIgnoreCase(latestVersion);
+    public String getName() {
+        return name;
     }
 
-    public boolean hasUpdate() {
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
+    }
+
+    public boolean isHasUpdate() {
         return hasUpdate;
     }
 
@@ -44,20 +68,11 @@ public class PluginInfo {
         this.hasUpdate = hasUpdate;
     }
 
-
-    public JavaPlugin getJavaPlugin() {
-        return javaPlugin;
+    public int getId() {
+        return id;
     }
 
-    public String getCoreIcon() {
-        return coreIcon;
-    }
-
-    public String getCoreLibraryVersion() {
-        return coreLibraryVersion;
-    }
-
-    public int getPluginId() {
-        return pluginId;
+    public void setId(int id) {
+        this.id = id;
     }
 }

@@ -1,10 +1,10 @@
 package ca.tweetzy.core.configuration;
 
+import java.util.List;
+
 import ca.tweetzy.core.compatibility.XMaterial;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 public class ConfigSetting {
 
@@ -108,7 +108,7 @@ public class ConfigSetting {
     @NotNull
     public XMaterial getMaterial() {
         String val = config.getString(key);
-        XMaterial mat = XMaterial.getMaterial(config.getString(key));
+        XMaterial mat = XMaterial.matchXMaterial(config.getString(key)).get();
 
         if (mat == null) {
             System.out.println(String.format("Config value \"%s\" has an invalid material name: \"%s\"", key, val));
@@ -121,7 +121,7 @@ public class ConfigSetting {
     public XMaterial getMaterial(@NotNull XMaterial def) {
         //return config.getMaterial(key, def);
         String val = config.getString(key);
-        XMaterial mat = val != null ? XMaterial.getMaterial(val) : null;
+        XMaterial mat = val != null ? XMaterial.matchXMaterial(val).get() : null;
 
         if (mat == null) {
             System.out.println(String.format("Config value \"%s\" has an invalid material name: \"%s\"", key, val));

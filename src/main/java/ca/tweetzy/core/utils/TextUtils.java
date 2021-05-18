@@ -22,9 +22,6 @@ public class TextUtils {
     static {
         supportedCharsets.add(StandardCharsets.UTF_8); // UTF-8 BOM: EF BB BF
         supportedCharsets.add(StandardCharsets.ISO_8859_1); // also starts with EF BB BF
-//        supportedCharsets.add(StandardCharsets.UTF_16LE); // FF FE
-//        supportedCharsets.add(StandardCharsets.UTF_16BE); // FE FF
-//        supportedCharsets.add(StandardCharsets.UTF_16);
 
         try {
             supportedCharsets.add(Charset.forName("windows-1253"));

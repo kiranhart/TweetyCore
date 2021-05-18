@@ -1,6 +1,5 @@
 package ca.tweetzy.core.chat;
 
-
 import ca.tweetzy.core.compatibility.ServerVersion;
 import ca.tweetzy.core.utils.ColorUtils;
 

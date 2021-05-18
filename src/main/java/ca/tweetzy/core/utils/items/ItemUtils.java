@@ -2,8 +2,8 @@ package ca.tweetzy.core.utils.items;
 
 import ca.tweetzy.core.compatibility.ServerVersion;
 import ca.tweetzy.core.compatibility.XMaterial;
-import ca.tweetzy.core.utils.TextUtils;
 import ca.tweetzy.core.utils.nms.NBTEditor;
+import ca.tweetzy.core.utils.TextUtils;
 import ca.tweetzy.core.utils.nms.NMSUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;

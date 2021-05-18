@@ -1,5 +1,7 @@
 package ca.tweetzy.core.configuration;
 
+import ca.tweetzy.core.configuration.ConfigFormattingRules.CommentStyle;
+
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -16,7 +18,7 @@ import java.util.stream.Collectors;
 public class Comment {
 
     final List<String> lines = new ArrayList();
-    ConfigFormattingRules.CommentStyle commentStyle = null;
+    CommentStyle commentStyle = null;
 
     public Comment() {
     }
@@ -29,22 +31,22 @@ public class Comment {
         this(null, lines);
     }
 
-    public Comment(ConfigFormattingRules.CommentStyle commentStyle, String... lines) {
+    public Comment(CommentStyle commentStyle, String... lines) {
         this(commentStyle, Arrays.asList(lines));
     }
 
-    public Comment(ConfigFormattingRules.CommentStyle commentStyle, List<String> lines) {
+    public Comment(CommentStyle commentStyle, List<String> lines) {
         this.commentStyle = commentStyle;
         if (lines != null) {
             lines.forEach(s -> this.lines.addAll(Arrays.asList(s.split("\n"))));
         }
     }
 
-    public ConfigFormattingRules.CommentStyle getCommentStyle() {
+    public CommentStyle getCommentStyle() {
         return commentStyle;
     }
 
-    public void setCommentStyle(ConfigFormattingRules.CommentStyle commentStyle) {
+    public void setCommentStyle(CommentStyle commentStyle) {
         this.commentStyle = commentStyle;
     }
 
@@ -58,15 +60,15 @@ public class Comment {
     }
 
     public static Comment loadComment(List<String> lines) {
-        ConfigFormattingRules.CommentStyle style = ConfigFormattingRules.parseStyle(lines);
+        CommentStyle style = ConfigFormattingRules.parseStyle(lines);
         int linePad = (style.drawBorder ? 1 : 0) + (style.drawSpace ? 1 : 0);
         int prefix = style.commentPrefix.length();
         int suffix = style.commentSuffix.length();
         return new Comment(style, lines.subList(linePad, lines.size() - linePad).stream().map(s -> s.substring(prefix, s.length() - suffix).trim()).collect(Collectors.toList()));
     }
 
-    public void writeComment(Writer output, int offset, ConfigFormattingRules.CommentStyle defaultStyle) throws IOException {
-        ConfigFormattingRules.CommentStyle style = commentStyle != null ? commentStyle : defaultStyle;
+    public void writeComment(Writer output, int offset, CommentStyle defaultStyle) throws IOException {
+        CommentStyle style = commentStyle != null ? commentStyle : defaultStyle;
         int minSpacing = 0, borderSpacing = 0;
         // first draw the top of the comment
         if (style.drawBorder) {

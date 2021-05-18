@@ -27,10 +27,11 @@ public class TweetzyCoreOverviewGUI extends Gui {
         for (int i = 0; i < plugins.size(); i++) {
             final PluginInfo plugin = plugins.get(i);
             setItem(i, new TItemBuilder(
-                    XMaterial.matchXMaterial(plugin.getCoreIcon()).get().parseMaterial())
-                    .setName(TextUtils.formatText("&e" + plugin.getJavaPlugin().getName()))
+                    XMaterial.matchXMaterial(plugin.getIcon()).get().parseMaterial())
+                    .setName(TextUtils.formatText("&e" + plugin.getName()))
                     .setLore(
-                            TextUtils.formatText("&fInstalled Version&f: &a" + plugin.getJavaPlugin().getDescription().getVersion()),
+                            TextUtils.formatText("&fVersion&f: &a" + plugin.getVersion()),
+                            TextUtils.formatText("&fHas Update&F: " + (plugin.isHasUpdate() ? "&a" + plugin.isHasUpdate() : "&c" + plugin.isHasUpdate())),
                             TextUtils.formatText(String.format("&fCore Version: &a%d", TweetyCore.getCoreVersion())),
                             "",
                             TextUtils.formatText("&eLeft Click to edit plugin settings.")
