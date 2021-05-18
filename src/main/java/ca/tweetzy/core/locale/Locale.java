@@ -89,7 +89,7 @@ public class Locale {
      */
     public static List<Locale> loadAllLocales(JavaPlugin plugin) {
         File localeFolder = new File(plugin.getDataFolder(), "locales/");
-        List<Locale> all = new ArrayList();
+        List<Locale> all = new ArrayList<>();
         for (File localeFile : localeFolder.listFiles()) {
             String fileName = localeFile.getName();
             if (!fileName.endsWith(FILE_EXTENSION)) continue;
@@ -165,9 +165,7 @@ public class Locale {
 
             fileName = fileName.substring(0, fileName.lastIndexOf('.'));
 
-            if (fileName.split("_").length != 2) return false;
-
-            return true;
+            return fileName.split("_").length == 2;
         } catch (IOException e) {
             return false;
         }
@@ -185,7 +183,7 @@ public class Locale {
             try (BufferedReader defaultReaderOriginal = new BufferedReader(new InputStreamReader(defaultIn, defaultCharset));
                  BufferedReader existingReaderOriginal = new BufferedReader(new InputStreamReader(existingIn, existingCharset));
                  BufferedReader defaultReader = translatePropertyToYAML(defaultReaderOriginal, defaultCharset);
-                 BufferedReader existingReader = translatePropertyToYAML(existingReaderOriginal, existingCharset);) {
+                 BufferedReader existingReader = translatePropertyToYAML(existingReaderOriginal, existingCharset)) {
 
                 Config existingLang = new Config(existingFile);
                 existingLang.load(existingReader);
@@ -196,10 +194,9 @@ public class Locale {
                 defaultLang.loadFromString(defaultData);
                 translateMsgRoot(defaultLang, defaultData, defaultCharset);
 
-                List<String> added = new ArrayList();
+                List<String> added = new ArrayList<>();
 
                 for (String defaultValueKey : defaultLang.getKeys(true)) {
-
                     Object val = defaultLang.get(defaultValueKey);
                     if (val instanceof ConfigSection) {
                         continue;
@@ -254,15 +251,15 @@ public class Locale {
 
         // load in the file!
         try (FileInputStream stream = new FileInputStream(file);
-             BufferedReader source = new BufferedReader(new InputStreamReader((InputStream) stream, charset));
-             BufferedReader reader = translatePropertyToYAML(source, charset);) {
+             BufferedReader source = new BufferedReader(new InputStreamReader(stream, charset));
+             BufferedReader reader = translatePropertyToYAML(source, charset)) {
             Config lang = new Config(file);
             lang.load(reader);
             translateMsgRoot(lang, file, charset);
             // load lists as strings with newlines
             lang.getValues(true).forEach((k, v) -> nodes.put(k,
                     v instanceof List
-                            ? (((List) v).stream().map(l -> l.toString()).collect(Collectors.joining("\n")).toString())
+                            ? (((List) v).stream().map(Object::toString).collect(Collectors.joining("\n")).toString())
                             : v.toString()));
         } catch (IOException e) {
             e.printStackTrace();
@@ -290,7 +287,7 @@ public class Locale {
             Matcher matcher;
             if ((line = line.replace('\r', ' ')
                     .replaceAll("\\p{C}", "?")
-                    .replaceAll(";", "")).trim().isEmpty()
+                    .replace(";", "")).trim().isEmpty()
                     || line.trim().startsWith("#") /* Comment */
                     // need to trim the search group because tab characters somehow ended up at the end of lines in a lot of these files
                     || !(matcher = OLD_NODE_PATTERN.matcher(line.trim())).find()) {
@@ -311,7 +308,7 @@ public class Locale {
     protected static void translateMsgRoot(Config lang, File file, Charset charset) throws IOException {
         List<String> msgs = lang.getValues(true).entrySet().stream()
                 .filter(e -> e.getValue() instanceof ConfigSection)
-                .map(e -> e.getKey())
+                .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
         if (!msgs.isEmpty()) {
             try (FileInputStream stream = new FileInputStream(file);
@@ -324,10 +321,9 @@ public class Locale {
                     }
                     Matcher matcher;
                     if (!(line = line.trim()).isEmpty() && !line.startsWith("#")
-                            && (matcher = OLD_NODE_PATTERN.matcher(line)).find()) {
-                        if (msgs.contains(matcher.group(1))) {
-                            lang.set(matcher.group(1) + ".message", matcher.group(2));
-                        }
+                            && (matcher = OLD_NODE_PATTERN.matcher(line)).find()
+                            && msgs.contains(matcher.group(1))) {
+                        lang.set(matcher.group(1) + ".message", matcher.group(2));
                     }
                 }
             }
@@ -337,10 +333,10 @@ public class Locale {
     protected static void translateMsgRoot(Config lang, String file, Charset charset) throws IOException {
         List<String> msgs = lang.getValues(true).entrySet().stream()
                 .filter(e -> e.getValue() instanceof ConfigSection)
-                .map(e -> e.getKey())
+                .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
         if (!msgs.isEmpty()) {
-            String source[] = file.split("\n");
+            String[] source = file.split("\n");
             String line;
             for (int lineNumber = 0; lineNumber < source.length; lineNumber++) {
                 line = source[lineNumber];
@@ -350,10 +346,9 @@ public class Locale {
                 }
                 Matcher matcher;
                 if (!(line = line.trim()).isEmpty() && !line.startsWith("#")
-                        && (matcher = OLD_NODE_PATTERN.matcher(line)).find()) {
-                    if (msgs.contains(matcher.group(1))) {
-                        lang.set(matcher.group(1) + ".message", matcher.group(2));
-                    }
+                        && (matcher = OLD_NODE_PATTERN.matcher(line)).find()
+                        && msgs.contains(matcher.group(1))) {
+                    lang.set(matcher.group(1) + ".message", matcher.group(2));
                 }
             }
         }
