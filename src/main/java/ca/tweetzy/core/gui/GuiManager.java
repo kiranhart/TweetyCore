@@ -139,7 +139,12 @@ public class GuiManager {
             if (openInv.getHolder() != null && openInv.getHolder() instanceof GuiHolder && ((GuiHolder) openInv.getHolder()).manager.uuid.equals(manager.uuid)) {
                 gui = ((GuiHolder) openInv.getHolder()).getGUI();
 
-                if (event.getClick() == ClickType.DOUBLE_CLICK) {
+                if (event.getClick() == ClickType.SHIFT_LEFT && gui.isAllowShiftClick()) {
+                    event.setCancelled(false);
+                    if (gui.onClick(manager, player, openInv, event)) {
+                        player.playSound(player.getLocation(), gui.getDefaultSound().parseSound(), 1F, 1F);
+                    }
+                } else if (event.getClick() == ClickType.DOUBLE_CLICK) {
                     // always cancel this event if there are matching gui elements, since it tends to do bad things
                     ItemStack clicked = event.getCursor();
                     if (clicked != null && clicked.getType() != Material.AIR) {
@@ -151,9 +156,7 @@ public class GuiManager {
                             }
                         }
                     }
-                }
-
-                if (event.getSlotType() == InventoryType.SlotType.OUTSIDE) {
+                } else if (event.getSlotType() == InventoryType.SlotType.OUTSIDE) {
                     if (!gui.onClickOutside(manager, player, event)) {
                         event.setCancelled(true);
                     }

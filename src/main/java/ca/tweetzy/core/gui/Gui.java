@@ -38,6 +38,7 @@ public class Gui {
     protected boolean allowDropItems = true;
     protected boolean allowClose = true;
     protected boolean useLockedCells = false;
+    protected boolean allowShiftClick = false;
     protected final Map<Integer, Boolean> unlockedCells = new HashMap<>();
     protected final Map<Integer, ItemStack> cellItems = new HashMap<>();
     protected final Map<Integer, Map<ClickType, Clickable>> conditionalButtons = new HashMap<>();
@@ -137,6 +138,14 @@ public class Gui {
     public Gui setAllowClose(boolean allow) {
         this.allowClose = allow;
         return this;
+    }
+
+    public void setAllowShiftClick(boolean allowShiftClick) {
+        this.allowShiftClick = allowShiftClick;
+    }
+
+    public boolean isAllowShiftClick() {
+        return allowShiftClick;
     }
 
     /**
