@@ -34,13 +34,29 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         this.plugin = plugin;
     }
 
+    public void setNoConsoleMessage(String msg_noConsole) {
+        this.msg_noConsole = msg_noConsole;
+    }
+
+    public void setNoPermsMessage(String msg_noPerms) {
+        this.msg_noPerms = msg_noPerms;
+    }
+
+    public void setNoCommandMessage(String msg_noCommand) {
+        this.msg_noCommand = msg_noCommand;
+    }
+
+    public void setSyntaxErrorMessage(List<String> msg_syntaxError) {
+        this.msg_syntaxError = msg_syntaxError;
+    }
+
     public Set<String> getCommands() {
         return Collections.unmodifiableSet(commands.keySet());
     }
 
     public List<String> getSubCommands(String command) {
         SimpleNestedCommand nested = command == null ? null : commands.get(command.toLowerCase());
-        return nested == null ? Collections.EMPTY_LIST : nested.children.keySet().stream().collect(Collectors.toList());
+        return nested == null ? Collections.emptyList() : new ArrayList<>(nested.children.keySet());
     }
 
     public Set<AbstractCommand> getAllCommands() {
@@ -56,9 +72,14 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         return all;
     }
 
+    public CommandManager registerCommandDynamically(String command) {
+        CommandManager.registerCommandDynamically(plugin, command, this, this);
+        return this;
+    }
+
     public SimpleNestedCommand registerCommandDynamically(AbstractCommand abstractCommand) {
         SimpleNestedCommand nested = new SimpleNestedCommand(abstractCommand);
-        abstractCommand.getCommands().stream().forEach(cmd -> {
+        abstractCommand.getCommands().forEach(cmd -> {
             CommandManager.registerCommandDynamically(plugin, cmd, this, this);
             commands.put(cmd.toLowerCase(), nested);
             PluginCommand pcmd = plugin.getCommand(cmd);
@@ -74,7 +95,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
     public SimpleNestedCommand addCommand(AbstractCommand abstractCommand) {
         SimpleNestedCommand nested = new SimpleNestedCommand(abstractCommand);
-        abstractCommand.getCommands().stream().forEach(cmd -> {
+        abstractCommand.getCommands().forEach(cmd -> {
             commands.put(cmd.toLowerCase(), nested);
             PluginCommand pcmd = plugin.getCommand(cmd);
             if (pcmd != null) {
@@ -252,7 +273,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
                 }
             }
         }
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 
     private List<String> fetchList(AbstractCommand abstractCommand, String[] args, CommandSender sender) {
@@ -271,10 +292,12 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
     public static void registerCommandDynamically(Plugin plugin, String command, CommandExecutor executor, TabCompleter tabManager) {
         try {
+
             // Retrieve the SimpleCommandMap from the server
             Class<?> clazzCraftServer = Bukkit.getServer().getClass();
             Object craftServer = clazzCraftServer.cast(Bukkit.getServer());
-            SimpleCommandMap commandMap = (SimpleCommandMap) craftServer.getClass().getDeclaredMethod("getCommandMap").invoke(craftServer);
+            SimpleCommandMap commandMap = (SimpleCommandMap) craftServer.getClass()
+                    .getDeclaredMethod("getCommandMap").invoke(craftServer);
 
             // Construct a new Command object
             Constructor<PluginCommand> constructorPluginCommand = PluginCommand.class.getDeclaredConstructor(String.class, Plugin.class);
@@ -305,21 +328,5 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         } catch (ReflectiveOperationException e) {
             e.printStackTrace();
         }
-    }
-
-    public void setMsg_noCommand(String msg_noCommand) {
-        this.msg_noCommand = msg_noCommand;
-    }
-
-    public void setMsg_noConsole(String msg_noConsole) {
-        this.msg_noConsole = msg_noConsole;
-    }
-
-    public void setMsg_noPerms(String msg_noPerms) {
-        this.msg_noPerms = msg_noPerms;
-    }
-
-    public void setMsg_syntaxError(List<String> msg_syntaxError) {
-        this.msg_syntaxError = msg_syntaxError;
     }
 }

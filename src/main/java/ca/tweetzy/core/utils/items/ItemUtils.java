@@ -715,7 +715,7 @@ public class ItemUtils {
 
                     check = new boolean[3];
 
-                    boolean isFuel = !item.getType().name().contains("LOG") && XMaterial.matchXMaterial(item.getType()).isFuel();
+                    boolean isFuel = !item.getType().name().contains("LOG") && XMaterial.isFuel(XMaterial.matchXMaterial(item.getType()));
                     // fuel is 2nd slot, input is first
                     if (isFuel) {
 
@@ -903,7 +903,7 @@ public class ItemUtils {
 
                     check = new boolean[3];
 
-                    boolean isFuel = !item.getType().name().contains("LOG") && XMaterial.matchXMaterial(item.getType()).isFuel();
+                    boolean isFuel = !item.getType().name().contains("LOG") && XMaterial.isFuel(XMaterial.matchXMaterial(item.getType()));
                     // fuel is 2nd slot, input is first
                     if (isFuel) {
 
