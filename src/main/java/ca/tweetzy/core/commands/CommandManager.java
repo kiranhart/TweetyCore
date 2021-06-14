@@ -11,6 +11,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -271,10 +272,9 @@ public class CommandManager implements CommandExecutor, TabCompleter {
     public static void registerCommandDynamically(Plugin plugin, String command, CommandExecutor executor, TabCompleter tabManager) {
         try {
             // Retrieve the SimpleCommandMap from the server
-            Class<?> classCraftServer = Bukkit.getServer().getClass();
-            Field fieldCommandMap = classCraftServer.getDeclaredField("commandMap");
-            fieldCommandMap.setAccessible(true);
-            SimpleCommandMap commandMap = (SimpleCommandMap) fieldCommandMap.get(Bukkit.getServer());
+            Class<?> clazzCraftServer = Bukkit.getServer().getClass();
+            Object craftServer = clazzCraftServer.cast(Bukkit.getServer());
+            SimpleCommandMap commandMap = (SimpleCommandMap) craftServer.getClass().getDeclaredMethod("getCommandMap").invoke(craftServer);
 
             // Construct a new Command object
             Constructor<PluginCommand> constructorPluginCommand = PluginCommand.class.getDeclaredConstructor(String.class, Plugin.class);
@@ -284,7 +284,11 @@ public class CommandManager implements CommandExecutor, TabCompleter {
             // If we're on Paper 1.8, we need to register timings (spigot creates timings on init, paper creates it on register)
             // later versions of paper create timings if needed when the command is executed
             if (ServerProject.isServer(ServerProject.PAPER, ServerProject.TACO) && ServerVersion.isServerVersionBelow(ServerVersion.V1_9)) {
-                //    commandObject.timings = co.aikar.timings.TimingsManager.getCommandTiming(plugin.getName().toLowerCase(), commandObject);
+                Class<?> clazz = Class.forName("co.aikar.timings.TimingsManager");
+                Method method = clazz.getMethod("getCommandTiming", String.class, Command.class);
+                Field field = PluginCommand.class.getField("timings");
+
+                field.set(commandObject, method.invoke(null, plugin.getName().toLowerCase(), commandObject));
             }
 
             // Set command action

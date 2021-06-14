@@ -2,6 +2,7 @@ package ca.tweetzy.core.core;
 
 import ca.tweetzy.core.TweetyCore;
 import ca.tweetzy.core.commands.AbstractCommand;
+import ca.tweetzy.core.compatibility.ClassMapping;
 import ca.tweetzy.core.compatibility.ServerProject;
 import ca.tweetzy.core.compatibility.ServerVersion;
 import ca.tweetzy.core.utils.nms.NMSUtils;
@@ -29,7 +30,7 @@ public class TweetzyCoreInfoCommand extends AbstractCommand {
         super(CommandType.CONSOLE_OK, "info");
 
         try {
-            serverInstance = NMSUtils.getNMSClass("MinecraftServer").getMethod("getServer").invoke(null);
+            serverInstance = ClassMapping.MINECRAFT_SERVER.getClazz("MinecraftServer").getMethod("getServer").invoke(null);
             tpsField = serverInstance.getClass().getField("recentTps");
         } catch (NoSuchFieldException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException e) {
             e.printStackTrace();

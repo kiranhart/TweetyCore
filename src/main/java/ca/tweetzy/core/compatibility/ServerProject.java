@@ -5,6 +5,7 @@ import org.bukkit.Bukkit;
 
 public enum ServerProject {
 
+
     UNKNOWN, CRAFTBUKKIT, SPIGOT, PAPER, TACO, GLOWSTONE;
     private final static ServerProject serverProject = checkProject();
 
@@ -50,5 +51,4 @@ public enum ServerProject {
     public static boolean isServer(ServerProject... versions) {
         return ArrayUtils.contains(versions, serverProject);
     }
-
 }
