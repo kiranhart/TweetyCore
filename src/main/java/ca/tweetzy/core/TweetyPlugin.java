@@ -92,7 +92,7 @@ public abstract class TweetyPlugin extends JavaPlugin {
                 ChatColor.GREEN.toString(), "Enabling", ChatColor.GRAY.toString()));
 
         try {
-            locale = Locale.loadDefaultLocale(this, "en_US");
+            locale = new Locale(this, "en_US");
             // plugin setup
             onPluginEnable();
             if (emergencyStop) {
@@ -150,21 +150,8 @@ public abstract class TweetyPlugin extends JavaPlugin {
      * Set the plugin's locale to a specific language
      *
      * @param localeName locale to use, eg "en_US"
-     * @param reload     optionally reload the loaded locale if the locale didn't
-     *                   change
-     * @return true if the locale exists and was loaded successfully
      */
-    public boolean setLocale(String localeName, boolean reload) {
-        if (locale != null && locale.getName().equals(localeName)) {
-            return !reload || locale.reloadMessages();
-        } else {
-            Locale l = Locale.loadLocale(this, localeName);
-            if (l != null) {
-                locale = l;
-                return true;
-            } else {
-                return false;
-            }
-        }
+    public void setLocale(String localeName) {
+        locale = new Locale(this, localeName);
     }
 }

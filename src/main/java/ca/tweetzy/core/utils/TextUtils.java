@@ -1,6 +1,7 @@
 package ca.tweetzy.core.utils;
 
-import org.bukkit.ChatColor;
+import ca.tweetzy.core.compatibility.ServerVersion;
+import net.md_5.bungee.api.ChatColor;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -14,9 +15,13 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class TextUtils {
+
+    private static final Pattern hexPattern = Pattern.compile("#([A-Fa-f0-9]{6})");
     private static final List<Charset> supportedCharsets = new ArrayList<>();
 
     static {
@@ -41,7 +46,10 @@ public class TextUtils {
             return "";
         if (capitalize)
             text = text.substring(0, 1).toUpperCase() + text.substring(1);
-        return ChatColor.translateAlternateColorCodes('&', text);
+
+        text = translateHexCodes(text);
+
+        return text;
     }
 
     public static List<String> formatText(List<String> list) {
@@ -50,6 +58,18 @@ public class TextUtils {
 
     public static List<String> formatText(String... list) {
         return Arrays.stream(list).map(TextUtils::formatText).collect(Collectors.toList());
+    }
+
+    public static String translateHexCodes (String textToTranslate) {
+        Matcher matcher = hexPattern.matcher(textToTranslate);
+        StringBuffer buffer = new StringBuffer();
+
+        while(matcher.find()) {
+            matcher.appendReplacement(buffer, ChatColor.of("#" + matcher.group(1)).toString());
+        }
+
+        return ChatColor.translateAlternateColorCodes('&', matcher.appendTail(buffer).toString());
+
     }
 
     public static List<String> wrap(String line) {

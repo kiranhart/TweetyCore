@@ -139,7 +139,7 @@ public class GuiManager {
             if (openInv.getHolder() != null && openInv.getHolder() instanceof GuiHolder && ((GuiHolder) openInv.getHolder()).manager.uuid.equals(manager.uuid)) {
                 gui = ((GuiHolder) openInv.getHolder()).getGUI();
 
-                if (event.getClick() == ClickType.SHIFT_LEFT && gui.isAllowShiftClick()) {
+                if (event.getClick() == ClickType.SHIFT_LEFT || event.getClick() == ClickType.SHIFT_RIGHT && gui.isAllowShiftClick()) {
                     event.setCancelled(false);
                     if (gui.onClick(manager, player, openInv, event)) {
                         player.playSound(player.getLocation(), gui.getDefaultSound().parseSound(), 1F, 1F);
