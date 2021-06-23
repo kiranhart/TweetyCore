@@ -140,7 +140,7 @@ public class GuiManager {
                 gui = ((GuiHolder) openInv.getHolder()).getGUI();
 
                 if (event.getClick() == ClickType.SHIFT_LEFT || event.getClick() == ClickType.SHIFT_RIGHT && gui.isAllowShiftClick()) {
-                    event.setCancelled(false);
+                    event.setCancelled(!gui.isAllowShiftClick());
                     if (gui.onClick(manager, player, openInv, event)) {
                         player.playSound(player.getLocation(), gui.getDefaultSound().parseSound(), 1F, 1F);
                     }

@@ -41,8 +41,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import static java.lang.String.format;
-
 /**
  * <b>XMaterial</b> - Data Values/Pre-flattening<br>
  * 1.13 and above as priority.
@@ -1588,7 +1586,6 @@ public enum XMaterial {
      * without throwing an exception.
      *
      * @param name the name of the material.
-     *
      * @return an optional that can be empty.
      * @since 5.1.0
      */
@@ -1659,7 +1656,6 @@ public enum XMaterial {
      * </pre>
      *
      * @param name the material string that consists of the material name, data and separator character.
-     *
      * @return the parsed XMaterial.
      * @see #matchXMaterial(String)
      * @since 3.0.0
@@ -1701,7 +1697,6 @@ public enum XMaterial {
      * if not a damageable item {@link ItemStack#getDurability()}.
      *
      * @param item the ItemStack to match.
-     *
      * @return an XMaterial if matched any.
      * @throws IllegalArgumentException may be thrown as an unexpected exception.
      * @see #matchXMaterial(Material)
@@ -1727,7 +1722,6 @@ public enum XMaterial {
      *
      * @param name the formatted name of the material.
      * @param data the data value of the material. Is always 0 or {@link #UNKNOWN_DATA_VALUE} when {@link Data#ISFLAT}
-     *
      * @return an XMaterial (with the same data value if specified)
      * @see #matchXMaterial(Material)
      * @see #matchXMaterial(int, byte)
@@ -1753,7 +1747,8 @@ public enum XMaterial {
             return (data >= 0 && isAMap) ? Optional.of(FILLED_MAP) : Optional.empty();
         }
 
-        if (!Data.ISFLAT && oldXMaterial.isPlural() && (duplicated == null ? isDuplicated(name) : duplicated)) return getIfPresent(name);
+        if (!Data.ISFLAT && oldXMaterial.isPlural() && (duplicated == null ? isDuplicated(name) : duplicated))
+            return getIfPresent(name);
         return Optional.of(oldXMaterial);
     }
 
@@ -1765,7 +1760,6 @@ public enum XMaterial {
      * <p>{@code MELON, CARROT, POTATO, BEETROOT -> true}
      *
      * @param name the name of the material to check.
-     *
      * @return true if there's a duplicated material for this material, otherwise false.
      * @since 2.0.0
      */
@@ -1780,7 +1774,6 @@ public enum XMaterial {
      *
      * @param id   the ID (Magic value) of the material.
      * @param data the data value of the material.
-     *
      * @return a parsed XMaterial with the same ID and data value.
      * @see #matchXMaterial(ItemStack)
      * @since 2.0.0
@@ -1805,7 +1798,6 @@ public enum XMaterial {
      * the normal RegEx + String Methods approach for both formatted and unformatted material names.
      *
      * @param name the material name to modify.
-     *
      * @return an enum name.
      * @since 2.0.0
      */
@@ -1843,7 +1835,6 @@ public enum XMaterial {
      * Checks if the specified version is the same version or higher than the current server version.
      *
      * @param version the major version to be checked. "1." is ignored. E.g. 1.12 = 12 | 1.9 = 9
-     *
      * @return true of the version is equal or higher than the current version.
      * @since 2.0.0
      */
@@ -1856,7 +1847,6 @@ public enum XMaterial {
      * In most cases, you shouldn't be using this method.
      *
      * @param version Supports {@link Bukkit#getVersion()}, {@link Bukkit#getBukkitVersion()} and normal formats such as "1.14"
-     *
      * @return the exact major version.
      * @see #supports(int)
      * @see #getVersion()
@@ -1943,7 +1933,6 @@ public enum XMaterial {
      * Want to learn RegEx? You can mess around in <a href="https://regexr.com/">RegExr</a> website.
      *
      * @param materials the material names to check base material on.
-     *
      * @return true if one of the given material names is similar to the base material.
      * @since 3.1.1
      */
@@ -1979,7 +1968,6 @@ public enum XMaterial {
      * Use {@link #parseItem()} instead when creating new ItemStacks.
      *
      * @param item the item to change its type.
-     *
      * @see #parseItem()
      * @since 3.0.0
      */
@@ -2000,7 +1988,6 @@ public enum XMaterial {
      * All the values passed to this method will not be null or empty and are formatted correctly.
      *
      * @param name the material name to check.
-     *
      * @return true if it's one of the legacy names, otherwise false.
      * @since 2.0.0
      */
@@ -2093,7 +2080,6 @@ public enum XMaterial {
      * Checks if an item has the same material (and data value on older versions).
      *
      * @param item item to check.
-     *
      * @return true if the material is the same as the item's material (and data value if on older versions), otherwise false.
      * @since 1.0.0
      */
@@ -2188,7 +2174,7 @@ public enum XMaterial {
         if (all == null) {
             all = new LinkedHashSet<>();
             for (XMaterial mat : values()) {
-                if (isItem(mat)) {
+                if (mat.isValidItem()) {
                     all.add(mat);
                 }
             }
@@ -2196,6 +2182,119 @@ public enum XMaterial {
         return Collections.unmodifiableSet(all);
     }
 
+
+    public boolean isValidItem() {
+        switch (this) {
+            case ACACIA_WALL_SIGN:
+            case AIR:
+            case ATTACHED_MELON_STEM:
+            case ATTACHED_PUMPKIN_STEM:
+            case BAMBOO_SAPLING:
+            case BEETROOTS:
+            case BIRCH_WALL_SIGN:
+            case BLACK_WALL_BANNER:
+            case BLUE_WALL_BANNER:
+            case BRAIN_CORAL_WALL_FAN:
+            case BROWN_WALL_BANNER:
+            case BUBBLE_COLUMN:
+            case BUBBLE_CORAL_WALL_FAN:
+            case CARROTS:
+            case CAVE_AIR:
+            case COCOA:
+            case CREEPER_WALL_HEAD:
+            case CYAN_WALL_BANNER:
+            case DARK_OAK_WALL_SIGN:
+            case DEAD_BRAIN_CORAL_WALL_FAN:
+            case DEAD_BUBBLE_CORAL_WALL_FAN:
+            case DEAD_FIRE_CORAL_WALL_FAN:
+            case DEAD_HORN_CORAL_WALL_FAN:
+            case DEAD_TUBE_CORAL_WALL_FAN:
+            case DRAGON_WALL_HEAD:
+            case END_GATEWAY:
+            case END_PORTAL:
+            case FARMLAND:
+            case FIRE: // used to be able to in older versions
+            case FIRE_CORAL_WALL_FAN:
+            case FROSTED_ICE:
+            case GRAY_WALL_BANNER:
+            case GREEN_WALL_BANNER:
+            case HORN_CORAL_WALL_FAN:
+            case JUNGLE_WALL_SIGN:
+            case KELP_PLANT:
+            case LAVA:
+            case LIGHT_BLUE_WALL_BANNER:
+            case LIGHT_GRAY_WALL_BANNER:
+            case LIME_WALL_BANNER:
+            case MAGENTA_WALL_BANNER:
+            case MELON_STEM:
+            case MOVING_PISTON:
+            case NETHER_PORTAL:
+            case OAK_WALL_SIGN:
+            case ORANGE_WALL_BANNER:
+            case PINK_WALL_BANNER:
+            case PISTON_HEAD:
+            case PLAYER_WALL_HEAD:
+            case POTATOES:
+            case POTTED_ACACIA_SAPLING:
+            case POTTED_ALLIUM:
+            case POTTED_AZURE_BLUET:
+            case POTTED_BAMBOO:
+            case POTTED_BIRCH_SAPLING:
+            case POTTED_BLUE_ORCHID:
+            case POTTED_BROWN_MUSHROOM:
+            case POTTED_CACTUS:
+            case POTTED_CORNFLOWER:
+            case POTTED_DANDELION:
+            case POTTED_DARK_OAK_SAPLING:
+            case POTTED_DEAD_BUSH:
+            case POTTED_FERN:
+            case POTTED_JUNGLE_SAPLING:
+            case POTTED_LILY_OF_THE_VALLEY:
+            case POTTED_OAK_SAPLING:
+            case POTTED_ORANGE_TULIP:
+            case POTTED_OXEYE_DAISY:
+            case POTTED_PINK_TULIP:
+            case POTTED_POPPY:
+            case POTTED_RED_MUSHROOM:
+            case POTTED_RED_TULIP:
+            case POTTED_SPRUCE_SAPLING:
+            case POTTED_WHITE_TULIP:
+            case POTTED_WITHER_ROSE:
+            case PUMPKIN_STEM:
+            case PURPLE_WALL_BANNER:
+            case REDSTONE_WALL_TORCH:
+            case REDSTONE_WIRE:
+            case RED_WALL_BANNER:
+            case SKELETON_WALL_SKULL:
+            case SPRUCE_WALL_SIGN:
+            case SWEET_BERRY_BUSH:
+            case TALL_SEAGRASS:
+            case TRIPWIRE:
+            case TUBE_CORAL_WALL_FAN:
+            case VOID_AIR:
+            case YELLOW_WALL_BANNER:
+            case ZOMBIE_WALL_HEAD:
+                return false;
+        }
+        if (ServerVersion.isServerVersionAtOrBelow(ServerVersion.V1_12)) {
+            switch (this) {
+                case ACACIA_WOOD:
+                case BIRCH_WOOD:
+                case DARK_OAK_WOOD:
+                case JUNGLE_WOOD:
+                case OAK_WOOD:
+                case SPRUCE_WOOD:
+                case STRIPPED_ACACIA_WOOD:
+                case STRIPPED_BIRCH_WOOD:
+                case STRIPPED_DARK_OAK_WOOD:
+                case STRIPPED_JUNGLE_WOOD:
+                case STRIPPED_OAK_WOOD:
+                case STRIPPED_SPRUCE_WOOD:
+                    return false;
+            }
+        }
+        return true;
+    }
 
     public static boolean isItem(XMaterial material) {
         if (XMaterial.isNewVersion()) return material.parseMaterial().isItem();
