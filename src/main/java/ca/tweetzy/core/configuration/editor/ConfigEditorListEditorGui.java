@@ -22,7 +22,7 @@ public class ConfigEditorListEditorGui extends SimplePagedGui {
         super(current);
         this.current = current;
         this.setUseLockedCells(false);
-        headerBackItem = footerBackItem = current.getHeaderBackItem();
+        headerBackItem = footerBackItem = current.getDefaultItem();
 
         setTitle(ChatColor.YELLOW + "String List Editor");
         this.setUseHeader(true);

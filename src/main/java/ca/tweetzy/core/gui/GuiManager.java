@@ -195,7 +195,10 @@ public class GuiManager {
                 if (manager.shutdown) {
                     gui.onClose(manager, player);
                 } else {
-                    Bukkit.getScheduler().runTaskLater(manager.plugin, () -> gui.onClose(manager, player), 1);
+                    Bukkit.getScheduler().runTaskLater(manager.plugin, () ->{
+                        gui.onClose(manager, player);
+                        player.updateInventory();
+                    }, 1);
                 }
                 manager.openInventories.remove(player);
             }

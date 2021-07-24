@@ -24,7 +24,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
@@ -34,7 +37,7 @@ import java.util.stream.Collectors;
  * Time Created: 6:55 p.m.
  * Usage of any code found within this class is prohibited unless given explicit permission otherwise
  */
-public class ConfigEditorGui extends SimplePagedGui {
+public class ConfigEditorGui extends Gui {
 
     final JavaPlugin plugin;
     final String file;
@@ -45,6 +48,32 @@ public class ConfigEditorGui extends SimplePagedGui {
     public boolean edits = false;
     List<String> sections = new ArrayList<>();
     List<String> settings = new ArrayList<>();
+
+    enum NodeType {
+        SECTION,
+        SETTING
+    }
+
+    static class ConfigNode {
+
+        final String name;
+        final NodeType nodeType;
+
+        public ConfigNode(String name, NodeType nodeType) {
+            this.name = name;
+            this.nodeType = nodeType;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public NodeType getNodeType() {
+            return nodeType;
+        }
+    }
+
+    List<ConfigNode> allNodes = new ArrayList<>();
 
     final String savePrefix;
 
@@ -77,55 +106,84 @@ public class ConfigEditorGui extends SimplePagedGui {
         // if we have a ConfigSection, we can also grab comments
         try {
             configSection_getCommentString = node.getClass().getDeclaredMethod("getCommentString", String.class);
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
         }
 
         // decorate header
-        this.setTitle(ChatColor.YELLOW + file);
-        this.setUseHeader(true);
-        headerBackItem = footerBackItem = GuiUtils.getBorderItem(XMaterial.GRAY_STAINED_GLASS_PANE);
-        final String path = node.getCurrentPath();
-        this.setItem(4, configItem(XMaterial.OAK_SIGN, !path.isEmpty() ? path : file, config, !path.isEmpty() ? path : null, ChatColor.BLACK.toString()));
-        this.setButton(8, GuiUtils.createButtonItem(XMaterial.BARRIER, "&cExit"), (event) -> event.player.closeInventory());
+        setTitle(ChatColor.YELLOW + file);
+        setUseLockedCells(true);
+        setDefaultItem(GuiUtils.getBorderItem(XMaterial.BLACK_STAINED_GLASS_PANE));
 
         // compile list of settings
         for (String key : node.getKeys(false)) {
-            if (node.isConfigurationSection(key)) {
-                sections.add(key);
-            } else {
-                settings.add(key);
+            this.allNodes.add(new ConfigNode(key, node.isConfigurationSection(key) ? NodeType.SECTION : NodeType.SETTING));
+        }
+
+        setRows(4);
+        int totalSize = this.allNodes.size();
+        if (totalSize >= 1 && totalSize <= 9) setRows(3);
+        if (totalSize >= 10 && totalSize <= 18) setRows(4);
+        if (totalSize >= 19 && totalSize <= 27) setRows(5);
+        if (totalSize >= 28) setRows(6);
+
+        draw();
+    }
+
+    private void draw() {
+        reset();
+
+        // the bar
+        switch (getRows()) {
+            case 2:
+                setItems(9, 17, GuiUtils.createButtonItem(XMaterial.YELLOW_STAINED_GLASS_PANE.parseMaterial(), ""));
+                break;
+            case 3:
+                setItems(18, 26, GuiUtils.createButtonItem(XMaterial.YELLOW_STAINED_GLASS_PANE.parseMaterial(), ""));
+                break;
+            case 4:
+                setItems(27, 35, GuiUtils.createButtonItem(XMaterial.YELLOW_STAINED_GLASS_PANE.parseMaterial(), ""));
+                break;
+            case 5:
+                setItems(36, 44, GuiUtils.createButtonItem(XMaterial.YELLOW_STAINED_GLASS_PANE.parseMaterial(), ""));
+                break;
+            case 6:
+                setItems(45, 54, GuiUtils.createButtonItem(XMaterial.YELLOW_STAINED_GLASS_PANE.parseMaterial(), ""));
+                break;
+        }
+
+        final String path = node.getCurrentPath();
+        pages = (int) Math.max(1, Math.ceil(this.allNodes.size() / (double) 45L));
+        setPrevPage(getRows() - 1, 3, GuiUtils.createButtonItem(XMaterial.ARROW, TextUtils.formatText("&ePrevious Page")));
+        setButton(getRows() - 1, 4, configItem(XMaterial.OAK_SIGN, !path.isEmpty() ? path : file, config, !path.isEmpty() ? path : null, ChatColor.BLACK.toString()), e -> e.player.closeInventory());
+        setNextPage(getRows() - 1, 5, GuiUtils.createButtonItem(XMaterial.ARROW, TextUtils.formatText("&eNext Page")));
+        setOnPage(e -> draw());
+
+        List<ConfigNode> data = this.allNodes.stream().skip((page - 1) * 45L).limit(45).collect(Collectors.toList());
+        int index = 0;
+
+        for (ConfigNode configNode : data) {
+            final Object val = node.get(configNode.getName());
+            if (val == null) continue;
+            if (configNode.nodeType == NodeType.SECTION) {
+                setButton(index++, configItem(XMaterial.WRITABLE_BOOK, ChatColor.YELLOW + configNode.getName(), node, configNode.getName(), "&7Click to open this section"),
+                        (event) -> event.manager.showGUI(event.player, new ConfigEditorGui(player, plugin, this, file, config, node.getConfigurationSection(configNode.getName()), this.savePrefix)));
             }
         }
 
-        // next we need to display the config settings
-        int index = 9;
-        for (final String sectionKey : sections) {
-            setButton(index++, configItem(XMaterial.WRITABLE_BOOK, ChatColor.YELLOW + sectionKey, node, sectionKey, "&7Click to open this section"),
-                    (event) -> event.manager.showGUI(event.player, new ConfigEditorGui(player, plugin, this, file, config, node.getConfigurationSection(sectionKey), this.savePrefix)));
-        }
+        data = data.stream().filter(n -> n.getNodeType() == NodeType.SETTING).collect(Collectors.toList());
 
-        // now display individual settings
-        for (final String settingKey : settings) {
-            final Object val = node.get(settingKey);
+        // Numbers
+        for (ConfigNode configNode : data) {
+            final Object val = node.get(configNode.getName());
             if (val == null) continue;
-            else if (val instanceof Boolean) {
-                // toggle switch
-                setButton(index, configItem(XMaterial.RED_DYE, ChatColor.YELLOW + settingKey, node, settingKey, String.valueOf((Boolean) val), "&7Click to toggle this setting"), (event) -> {
-                    this.toggle(event.slot, settingKey);
-                });
 
-                if ((Boolean) val) {
-                    updateItemType(index, XMaterial.LIME_DYE);
-                    highlightItem(index);
-                }
-
-            } else if (isNumber(val)) {
+            if (isNumber(val)) {
                 // number dial
-                this.setButton(index, configItem(XMaterial.CLOCK, ChatColor.YELLOW + settingKey, node, settingKey, String.valueOf((Number) val), "&7Click to edit this setting"),
+                this.setButton(index, configItem(XMaterial.CLOCK, ChatColor.YELLOW + configNode.getName(), node, configNode.getName(), String.valueOf((Number) val), "&7Click to edit this setting"),
                         (event) -> {
                             event.gui.exit();
-                            ChatPrompt.showPrompt(plugin, event.player, "Enter a new number value for " + settingKey + ":", response -> {
-                                if (!setNumber(event.slot, settingKey, response.getMessage().trim())) {
+                            ChatPrompt.showPrompt(plugin, event.player, "Enter a new number value for " + configNode.getName() + ":", response -> {
+                                if (!setNumber(event.slot, configNode.getName(), response.getMessage().trim())) {
                                     event.player.sendMessage(ChatColor.RED + "Error: \"" + response.getMessage().trim() + "\" is not a number!");
                                 }
                             }).setOnClose(() -> event.manager.showGUI(event.player, this))
@@ -134,17 +192,42 @@ public class ConfigEditorGui extends SimplePagedGui {
                                         event.manager.showGUI(event.player, this);
                                     });
                         });
-            } else if (val instanceof String) {
-                // changing a "string" value (or change to a feather for writing quill)
+                index++;
+            }
+        }
 
+        // Booleans
+        for (ConfigNode configNode : data) {
+            final Object val = node.get(configNode.getName());
+            if (val == null) continue;
+
+            if (val instanceof Boolean) {
+                // toggle switch
+                setButton(index, configItem(XMaterial.RED_DYE, ChatColor.YELLOW + configNode.getName(), node, configNode.getName(), String.valueOf((Boolean) val), "&7Click to toggle this setting"), (event) -> {
+                    this.toggle(event.slot, configNode.getName());
+                });
+
+                if ((Boolean) val) {
+                    updateItemType(index, XMaterial.LIME_DYE);
+                    highlightItem(index);
+                }
+                index++;
+            }
+        }
+
+        // Strings / Materials / Sounds
+        for (ConfigNode configNode : data) {
+            final Object val = node.get(configNode.getName());
+            if (val == null) continue;
+            if (val instanceof String) {
                 if (XMaterial.contains(((String) val).toUpperCase())) {
-                    setButton(index, configItem(XMaterial.CRAFTING_TABLE, ChatColor.YELLOW + settingKey, node, settingKey, val.toString(), "&7Click to edit this setting"),
+                    setButton(index, configItem(XMaterial.CRAFTING_TABLE, ChatColor.YELLOW + configNode.getName(), node, configNode.getName(), val.toString(), "&7Click to edit this setting"),
                             (event) -> {
                                 SimplePagedGui paged = new SimplePagedGui(this);
-                                paged.setTitle(ChatColor.YELLOW + settingKey);
+                                paged.setTitle(ChatColor.YELLOW + configNode.getName());
                                 paged.setUseLockedCells(true);
-                                paged.setHeaderBackItem(headerBackItem).setFooterBackItem(footerBackItem).setDefaultItem(blankItem);
-                                paged.setItem(4, configItem(XMaterial.OAK_SIGN, settingKey, node, settingKey, "&7Choose an item to change this value to"));
+                                paged.setHeaderBackItem(GuiUtils.getBorderItem(XMaterial.BLACK_STAINED_GLASS_PANE)).setFooterBackItem(GuiUtils.getBorderItem(XMaterial.BLACK_STAINED_GLASS_PANE)).setDefaultItem(blankItem);
+                                paged.setItem(4, configItem(XMaterial.OAK_SIGN, configNode.getName(), node, configNode.getName(), "&7Choose an item to change this value to"));
                                 int i = 9;
 
                                 List<Material> supportedVersionItems = new ArrayList<>();
@@ -157,7 +240,7 @@ public class ConfigEditorGui extends SimplePagedGui {
 
                                 for (Material material : supportedVersionItems) {
                                     paged.setButton(i, GuiUtils.createButtonItem(material, material.name().toLowerCase().replace("_", " ")), ClickType.LEFT, (matEvent) -> {
-                                        setMaterial(event.slot, settingKey, matEvent.clickedItem);
+                                        setMaterial(event.slot, configNode.getName(), matEvent.clickedItem);
                                         matEvent.player.closeInventory();
                                     });
                                     i++;
@@ -165,18 +248,18 @@ public class ConfigEditorGui extends SimplePagedGui {
                                 event.manager.showGUI(event.player, paged);
                             });
                 } else if (XSound.contains(((String) val).toUpperCase())) {
-                    setButton(index, configItem(XMaterial.MUSIC_DISC_13, ChatColor.YELLOW + settingKey, node, settingKey, val.toString(), "&7Click to edit this setting"),
+                    setButton(index, configItem(XMaterial.MUSIC_DISC_13, ChatColor.YELLOW + configNode.getName(), node, configNode.getName(), val.toString(), "&7Click to edit this setting"),
                             (event) -> {
                                 SimplePagedGui paged = new SimplePagedGui(this);
-                                paged.setTitle(ChatColor.YELLOW + settingKey);
+                                paged.setTitle(ChatColor.YELLOW + configNode.getName());
                                 paged.setUseLockedCells(true);
-                                paged.setHeaderBackItem(headerBackItem).setFooterBackItem(footerBackItem).setDefaultItem(blankItem);
-                                paged.setItem(4, configItem(XMaterial.OAK_SIGN, settingKey, node, settingKey, "&7Choose an item to change this value to"));
+                                paged.setHeaderBackItem(GuiUtils.getBorderItem(XMaterial.BLACK_STAINED_GLASS_PANE)).setFooterBackItem(GuiUtils.getBorderItem(XMaterial.BLACK_STAINED_GLASS_PANE)).setDefaultItem(blankItem);
+                                paged.setItem(4, configItem(XMaterial.OAK_SIGN, configNode.getName(), node, configNode.getName(), "&7Choose an item to change this value to"));
                                 int i = 9;
                                 for (XSound sound : XSound.getAllValidSounds()) {
                                     if (sound.isSupported()) {
                                         paged.setButton(i++, GuiUtils.createButtonItem(XMaterial.MUSIC_DISC_CHIRP, WordUtils.capitalize(sound.name().replace('_', ' ').toLowerCase(Locale.ENGLISH))), ClickType.LEFT, (matEvent) -> {
-                                            setSound(event.slot, settingKey, sound);
+                                            setSound(event.slot, configNode.getName(), sound);
                                             matEvent.player.closeInventory();
                                         });
                                     }
@@ -184,12 +267,12 @@ public class ConfigEditorGui extends SimplePagedGui {
                                 event.manager.showGUI(event.player, paged);
                             });
                 } else {
-                    setButton(index, configItem(XMaterial.FEATHER, ChatColor.YELLOW + settingKey, node, settingKey, val.toString(), "&7Click to edit this setting"),
+                    setButton(index, configItem(XMaterial.FEATHER, ChatColor.YELLOW + configNode.getName(), node, configNode.getName(), val.toString(), "&7Click to edit this setting"),
                             (event) -> {
                                 event.gui.exit();
-                                ChatPrompt.showPrompt(plugin, event.player, "Enter a new value for " + settingKey + ":", response -> {
-                                    node.set(settingKey, response.getMessage().trim());
-                                    updateValue(event.slot, settingKey);
+                                ChatPrompt.showPrompt(plugin, event.player, "Enter a new value for " + configNode.getName() + ":", response -> {
+                                    node.set(configNode.getName(), response.getMessage().trim());
+                                    updateValue(event.slot, configNode.getName());
                                 }).setOnClose(() -> event.manager.showGUI(event.player, this))
                                         .setOnCancel(() -> {
                                             event.player.sendMessage(ChatColor.RED + "Edit canceled");
@@ -198,23 +281,25 @@ public class ConfigEditorGui extends SimplePagedGui {
                             });
 
                 }
-
-            } else if (val instanceof List) {
-                setButton(index, configItem(XMaterial.COMMAND_BLOCK, ChatColor.YELLOW + settingKey, node, settingKey, String.format("(%d values)", ((List) val).size()), "&7Click to edit this setting"),
-                        (event) -> {
-                            event.manager.showGUI(event.player, (new ConfigEditorListEditorGui(this, settingKey, (List) val)).setOnClose((gui) -> {
-                                if (((ConfigEditorListEditorGui) gui.gui).saveChanges) {
-                                    setList(event.slot, settingKey, ((ConfigEditorListEditorGui) gui.gui).values);
-                                }
-                            }));
-                        });
-            } else {
-
+                index++;
             }
-
-            ++index;
         }
 
+        // Lists
+        for (ConfigNode configNode : data) {
+            final Object val = node.get(configNode.getName());
+            if (val == null) continue;
+
+            if (val instanceof List) {
+                setButton(index, configItem(XMaterial.COMMAND_BLOCK, ChatColor.YELLOW + configNode.getName(), node, configNode.getName(), String.format("(%d values)", ((List) val).size()), "&7Click to edit this setting"),
+                        (event) -> event.manager.showGUI(event.player, (new ConfigEditorListEditorGui(this, configNode.getName(), (List) val)).setOnClose((gui) -> {
+                            if (((ConfigEditorListEditorGui) gui.gui).saveChanges) {
+                                setList(event.slot, configNode.getName(), ((ConfigEditorListEditorGui) gui.gui).values);
+                            }
+                        })));
+                index++;
+            }
+        }
     }
 
     public ConfigurationSection getCurrentNode() {
