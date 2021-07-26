@@ -1,5 +1,6 @@
 package ca.tweetzy.core.input;
 
+import ca.tweetzy.core.utils.TextUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -41,7 +42,7 @@ public class ChatPrompt implements Listener {
         prompt.startListener(plugin);
         player.closeInventory();
         if (message != null)
-            player.sendMessage(message);
+            player.sendMessage(TextUtils.formatText(message));
         return prompt;
     }
 

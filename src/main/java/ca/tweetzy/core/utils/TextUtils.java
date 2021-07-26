@@ -1,6 +1,5 @@
 package ca.tweetzy.core.utils;
 
-import ca.tweetzy.core.compatibility.ServerVersion;
 import net.md_5.bungee.api.ChatColor;
 
 import java.io.BufferedInputStream;

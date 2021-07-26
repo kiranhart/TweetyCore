@@ -1,6 +1,5 @@
 package ca.tweetzy.core.core;
 
-import ca.tweetzy.core.compatibility.XMaterial;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**

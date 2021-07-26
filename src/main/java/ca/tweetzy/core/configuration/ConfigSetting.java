@@ -1,10 +1,10 @@
 package ca.tweetzy.core.configuration;
 
-import java.util.List;
-
 import ca.tweetzy.core.compatibility.XMaterial;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class ConfigSetting {
 

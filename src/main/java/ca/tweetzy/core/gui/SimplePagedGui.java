@@ -3,6 +3,7 @@ package ca.tweetzy.core.gui;
 import ca.tweetzy.core.compatibility.XMaterial;
 import ca.tweetzy.core.gui.events.GuiClickEvent;
 import ca.tweetzy.core.gui.methods.Clickable;
+import ca.tweetzy.core.utils.TextUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -148,8 +149,7 @@ public class SimplePagedGui extends Gui {
     @Override
     protected void createInventory() {
         final int cells = rows * 9;
-        inventory = Bukkit.getServer().createInventory(new GuiHolder(guiManager, this), cells,
-                title == null ? "" : trimTitle(title));
+        inventory = Bukkit.getServer().createInventory(new GuiHolder(guiManager, this), cells, title == null ? "" : TextUtils.formatText(trimTitle(title)));
     }
 
     @Override
