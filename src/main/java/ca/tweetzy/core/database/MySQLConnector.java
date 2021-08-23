@@ -25,7 +25,7 @@ public class MySQLConnector implements DatabaseConnector {
         System.out.println("connecting to " + hostname + " : " + port);
 
         HikariConfig config = new HikariConfig();
-        config.setJdbcUrl("jdbc:mysql://" + hostname + ":" + port + "/" + database + "?useSSL=" + useSSL);
+        config.setJdbcUrl("jdbc:mysql://" + hostname + ":" + port + "/" + database + "?useServerPrepStmts=false&rewriteBatchedStatements=true&useSSL=" + useSSL);
         config.setUsername(username);
         config.setPassword(password);
         config.setMaximumPoolSize(3);
