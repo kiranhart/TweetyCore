@@ -19,6 +19,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
@@ -181,6 +182,15 @@ public class PlayerChatInput<T> implements Listener {
 				return;
 			onDisconnect.run();
 			end(EndReason.PLAYER_DISCONECTS);
+		}
+	}
+
+	@EventHandler
+	public void onPlayerUseCommand(PlayerCommandPreprocessEvent event) {
+		if (event.getPlayer().getUniqueId().equals(player.getUniqueId())) {
+			if (!isStarted())// We have already ended
+				return;
+			end(EndReason.COMMAND);
 		}
 	}
 
@@ -626,6 +636,7 @@ public class PlayerChatInput<T> implements Listener {
 		 * The player sent an invalid input and the repeating mode is off
 		 */
 		INVALID_INPUT,
+		COMMAND,
 		/**
 		 * A plugin ended the input process
 		 */

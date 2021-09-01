@@ -268,18 +268,21 @@ public class ConfigEditorGui extends Gui {
 								event.manager.showGUI(event.player, paged);
 							});
 				} else {
-					setButton(index, configItem(XMaterial.FEATHER, ChatColor.YELLOW + configNode.getName(), node, configNode.getName(), configNode.getName().contains("password") ? StringUtils.repeat("*", val.toString().length()) : val.toString(), "&7Click to edit this setting"),
-							(event) -> {
-								event.gui.exit();
-								ChatPrompt.showPrompt(plugin, event.player, "Enter a new value for " + configNode.getName() + ":", response -> {
-											node.set(configNode.getName(), response.getMessage().trim());
-											updateValue(event.slot, configNode.getName());
-										}).setOnClose(() -> event.manager.showGUI(event.player, this))
-										.setOnCancel(() -> {
-											event.player.sendMessage(ChatColor.RED + "Edit canceled");
-											event.manager.showGUI(event.player, this);
-										});
-							});
+					setButton(index, configItem(XMaterial.FEATHER, ChatColor.YELLOW + configNode.getName(), node, configNode.getName(), configNode.getName().contains("password") ? StringUtils.repeat("*", val.toString().length()) : val.toString(), "&7Click to edit this setting"), (event) -> {
+						if (configNode.getName().contains("password") && !event.player.hasPermission("tweetzy.editor.admin")) {
+							return;
+						}
+
+						event.gui.exit();
+						ChatPrompt.showPrompt(plugin, event.player, "Enter a new value for " + configNode.getName() + ":", response -> {
+									node.set(configNode.getName(), response.getMessage().trim());
+									updateValue(event.slot, configNode.getName());
+								}).setOnClose(() -> event.manager.showGUI(event.player, this))
+								.setOnCancel(() -> {
+									event.player.sendMessage(ChatColor.RED + "Edit canceled");
+									event.manager.showGUI(event.player, this);
+								});
+					});
 
 				}
 				index++;
