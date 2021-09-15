@@ -25,10 +25,12 @@ public class MySQLConnector implements DatabaseConnector {
         System.out.println("connecting to " + hostname + " : " + port);
 
         HikariConfig config = new HikariConfig();
-        config.setJdbcUrl("jdbc:mysql://" + hostname + ":" + port + "/" + database + "?useServerPrepStmts=false&rewriteBatchedStatements=true&useSSL=" + useSSL);
+        config.setJdbcUrl("jdbc:mysql://" + hostname + ":" + port + "/" + database + "?useUnicode=yes&characterEncoding=UTF-8&useServerPrepStmts=false&rewriteBatchedStatements=true&useSSL=" + useSSL);
         config.setUsername(username);
         config.setPassword(password);
         config.setMaximumPoolSize(3);
+//        config.addDataSourceProperty("characterEncoding", "utf8");
+//        config.addDataSourceProperty("useUnicode","true");
 
         try {
             this.hikari = new HikariDataSource(config);
