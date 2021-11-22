@@ -42,6 +42,7 @@ public class PlayerChatInput<T> implements Listener {
 	private BiConsumer<Player, T> onFinish;
 	private Consumer<Player> onCancel;
 	private Consumer<Player> onExpire;
+	private Consumer<Player> onCommand;
 	private Runnable onDisconnect;
 	private Player player;
 
@@ -109,7 +110,9 @@ public class PlayerChatInput<T> implements Listener {
 			@Nonnull BiConsumer<Player, T> onFinish, @Nonnull Consumer<Player> onCancel, @Nonnull String cancel,
 			@Nonnull BiFunction<Player, String, Boolean> onInvalidInput, boolean repeat,
 			@Nullable EnumMap<EndReason, PlayerChatInput<?>> chainAfter, int expiresAfter,
-			@Nonnull Consumer<Player> onExpire, @Nullable String whenExpireMessage, @Nonnull Runnable onDisconnect) {
+			@Nonnull Consumer<Player> onExpire, @Nullable String whenExpireMessage, @Nonnull Runnable onDisconnect,
+			@Nonnull Consumer<Player> onCommand
+	) {
 		Objects.requireNonNull(plugin, "main can't be null");
 		Objects.requireNonNull(player, "player can't be null");
 		Objects.requireNonNull(invalidInputMessgae, "isValidInput can't be null");
@@ -139,6 +142,7 @@ public class PlayerChatInput<T> implements Listener {
 		this.onExpire = onExpire;
 		this.onExpireMessage = whenExpireMessage;
 		this.onDisconnect = onDisconnect;
+		this.onCommand = onCommand;
 	}
 
 	@EventHandler
@@ -190,6 +194,7 @@ public class PlayerChatInput<T> implements Listener {
 		if (event.getPlayer().getUniqueId().equals(player.getUniqueId())) {
 			if (!isStarted())// We have already ended
 				return;
+			onCommand.accept(event.getPlayer());
 			end(EndReason.COMMAND);
 		}
 	}
@@ -331,6 +336,7 @@ public class PlayerChatInput<T> implements Listener {
 		private BiConsumer<Player, U> onFinish;
 		private Consumer<Player> onCancel;
 		private Consumer<Player> onExpire;
+		private Consumer<Player> onCommand;
 		private Runnable onDisconnect;
 		private Player player;
 
@@ -373,6 +379,7 @@ public class PlayerChatInput<T> implements Listener {
 			onFinish = (p, val) -> {};
 			onCancel = (p) -> {};
 			onExpire = (p) -> {};
+			onCommand = (p) -> {};
 			onDisconnect = () -> {};
 
 			expiresAfter = -1;
@@ -440,6 +447,11 @@ public class PlayerChatInput<T> implements Listener {
 		 */
 		public PlayerChatInputBuilder<U> onFinish(@Nonnull BiConsumer<Player, U> onFinish) {
 			this.onFinish = onFinish;
+			return this;
+		}
+
+		public PlayerChatInputBuilder<U> onCommand(@Nonnull Consumer<Player> onCommand) {
+			this.onCommand = onCommand;
 			return this;
 		}
 
@@ -604,7 +616,7 @@ public class PlayerChatInput<T> implements Listener {
 		public PlayerChatInput<U> build() {
 			return new PlayerChatInput<U>(main, player, value, invalidInputMessage, sendValueMessage, isValidInput,
 					setValue, onFinish, onCancel, cancel, onInvalidInput, repeat, chainAfter, expiresAfter, onExpire,
-					whenExpire, onDisconnect);
+					whenExpire, onDisconnect, onCommand);
 		}
 	}
 

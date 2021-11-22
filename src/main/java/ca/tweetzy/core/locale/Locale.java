@@ -15,44 +15,45 @@ import java.util.regex.Matcher;
  */
 public class Locale {
 
-    final String EXTENSION = ".lang";
+	final String EXTENSION = ".lang";
 
-    private JavaPlugin plugin;
-    private final Config config;
+	private JavaPlugin plugin;
+	private final Config config;
 
-    private String message;
+	private String message;
 
-    public Locale(JavaPlugin plugin, String language) {
-        this.plugin = plugin;
-        this.config = new Config(plugin, "/locales/", language + EXTENSION);
-        this.config.load();
-    }
+	public Locale(JavaPlugin plugin, String language) {
+		this.plugin = plugin;
+		this.config = new Config(plugin, "/locales/", language + EXTENSION);
+		this.config.load();
+	}
 
-    public Locale getMessage(String node) {
-        this.message = this.config.getString(node);
-        return this;
-    }
+	public Locale getMessage(String node) {
+		this.message = this.config.getString(node);
+		return this;
+	}
 
-    public Locale processPlaceholder(String placeholder, Object replacement) {
-        final String place = Matcher.quoteReplacement(placeholder);
-        this.message = message.replaceAll("%" + place + "%|\\{" + place + "\\}", replacement == null ? "" : Matcher.quoteReplacement(replacement.toString()));
-        return this;
-    }
+	public Locale processPlaceholder(String placeholder, Object replacement) {
+		final String place = Matcher.quoteReplacement(placeholder);
+		this.message = message.replaceAll("%" + place + "%|\\{" + place + "\\}", replacement == null ? "" : Matcher.quoteReplacement(replacement.toString()));
+		return this;
+	}
 
-    public Locale newMessage(String message) {
-        this.message = message;
-        return this;
-    }
+	public Locale newMessage(String message) {
+		this.message = message;
+		return this;
+	}
 
-    public void sendPrefixedMessage(CommandSender sender) {
-        sender.sendMessage(TextUtils.formatText(this.config.getString("general.prefix") + " " + this.message));
-    }
+	public void sendPrefixedMessage(CommandSender sender) {
+		final String prefix = TextUtils.formatText(this.config.getString("general.prefix"));
+		sender.sendMessage(prefix.length() == 0 ? "" + this.message : " " + this.message);
+	}
 
-    public String getMessage() {
-        return this.message;
-    }
+	public String getMessage() {
+		return this.message;
+	}
 
-    public Config getConfig() {
-        return config;
-    }
+	public Config getConfig() {
+		return config;
+	}
 }

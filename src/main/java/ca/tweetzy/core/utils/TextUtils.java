@@ -19,6 +19,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class TextUtils {
+    //eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDczZjc2YTZjYmJlYmE0MTY5OGIzNThkZDdjYTEyZDczYjNlYzE2Mjk5Y2UyOWY0MTFmNjdkM2I4ZjIwZmY0MCJ9fX0=
 
     private static final Pattern hexPattern = Pattern.compile("#([A-Fa-f0-9]{6})");
     private static final List<Charset> supportedCharsets = new ArrayList<>();
