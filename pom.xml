@@ -6,7 +6,7 @@
     <groupId>ca.tweetzy</groupId>
     <artifactId>tweetycore</artifactId>
     <modelVersion>4.0.0</modelVersion>
-    <version>2.9.6</version>
+    <version>3.0.0</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -35,7 +35,7 @@
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
-                    <compilerArgument>-proc:none</compilerArgument>
+<!--                    <compilerArgument>-proc:none</compilerArgument>-->
                 </configuration>
             </plugin>
             <plugin>
@@ -104,13 +104,23 @@
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
+        <repository>
+            <id>mojang</id>
+            <name>Mojang's Repository</name>
+            <url>https://libraries.minecraft.net/</url>
+        </repository>
     </repositories>
     <dependencies>
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
-            <version>1.17-R0.1-SNAPSHOT</version>
+            <version>1.18-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.mojang</groupId>
+            <artifactId>authlib</artifactId>
+            <version>1.5.21</version>
         </dependency>
         <!-- Plugins -->
         <dependency>

@@ -46,7 +46,7 @@ public class Locale {
 
 	public void sendPrefixedMessage(CommandSender sender) {
 		final String prefix = TextUtils.formatText(this.config.getString("general.prefix"));
-		sender.sendMessage(prefix.length() == 0 ? "" + this.message : " " + this.message);
+		sender.sendMessage(TextUtils.formatText(prefix.length() == 0 ? "" + this.message : prefix + " " + this.message));
 	}
 
 	public String getMessage() {
