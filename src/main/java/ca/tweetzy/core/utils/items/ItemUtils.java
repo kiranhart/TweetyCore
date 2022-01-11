@@ -198,7 +198,7 @@ public class ItemUtils {
                         ? NMSUtils.getPrivateMethod(mc_NBTTagList, "a", mc_NBTBase)
                         : mc_NBTTagList.getDeclaredMethod("add", mc_NBTBase);
             } catch (Exception ex) {
-                Logger.getLogger(ItemUtils.class.getName()).log(Level.SEVERE, null, ex);
+//                Logger.getLogger(ItemUtils.class.getName()).log(Level.SEVERE, null, ex); shut this up
             }
         }
     }
