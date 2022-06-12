@@ -28,7 +28,7 @@ public class TweetyCore {
     private final static String prefix = "[TweetyCore]";
     private final static String cPrefix = "&8[&3TweetyCore&8]";
     private static String pluginPrefix = "[TweetyCore]";
-    private final static int coreRevision = 2;
+    private final static int coreRevision = 3;
 
     private CommandManager commandManager;
     private JavaPlugin piggybackedPlugin;
