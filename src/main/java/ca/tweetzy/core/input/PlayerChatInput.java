@@ -14,6 +14,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -156,7 +157,7 @@ public class PlayerChatInput<T> implements Listener {
 	}
 
 	private void runEventOnMainThread(String message) {
-		if (message.equalsIgnoreCase(cancel)) { // Player cancells input
+		if (ChatColor.stripColor(message).equalsIgnoreCase(cancel)) { // Player cancells input
 			onCancel.accept(player);
 			end(EndReason.PLAYER_CANCELLS);
 			return;
@@ -195,7 +196,7 @@ public class PlayerChatInput<T> implements Listener {
 			if (!isStarted())// We have already ended
 				return;
 			onCommand.accept(event.getPlayer());
-			end(EndReason.COMMAND);
+			event.setCancelled(true);
 		}
 	}
 
