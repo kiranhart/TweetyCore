@@ -19,6 +19,7 @@ public enum ClassMapping {
     BLOCK_POSITION("core", "BlockPosition"),
     CHAT_MESSAGE_TYPE("network.chat", "ChatMessageType"),
     CHUNK("world.level.chunk", "Chunk"),
+    CLIENTBOUND_INITIALIZE_BORDER_PACKET("network.protocol.game", "ClientboundInitializeBorderPacket"), // Added in 1.17
     ENCHANTMENT_MANAGER("world.item.enchantment", "EnchantmentManager"),
     ENTITY("world.entity", "Entity"),
     ENTITY_INSENTIENT("world.entity", "EntityInsentient"),
@@ -37,6 +38,7 @@ public enum ClassMapping {
     PERSISTENT_ENTITY_SECTION_MANAGER("world.level.entity", "PersistentEntitySectionManager"),
     PACKET("network.protocol", "Packet"),
     PACKET_PLAY_OUT_CHAT("network.protocol.game", "PacketPlayOutChat"),
+    /* 1.19 Packet */ CLIENTBOUND_SYSTEM_CHAT("network.protocol.game", "ClientboundSystemChatPacket"),
     PACKET_PLAY_OUT_WORLD_BORDER("PacketPlayOutWorldBorder"), // Removed in 1.17
     PLAYER_CONNECTION("server.network", "PlayerConnection"),
     WORLD("world.level", "World"),
@@ -48,8 +50,12 @@ public enum ClassMapping {
     CRAFT_CHUNK("CraftChunk"),
     CRAFT_ENTITY("entity", "CraftEntity"),
     CRAFT_ITEM_STACK("inventory", "CraftItemStack"),
+    CRAFT_MAGIC_NUMBERS("util", "CraftMagicNumbers"),
     CRAFT_PLAYER("entity", "CraftPlayer"),
-    CRAFT_WORLD("CraftWorld");
+    CRAFT_WORLD("CraftWorld"),
+
+    RANDOM_SOURCE("util", "RandomSource"),
+    MOJANGSON_PARSER("nbt", "MojangsonParser");
 
     private final String packageName;
     private final String className;
@@ -68,17 +74,21 @@ public enum ClassMapping {
     }
 
     public Class<?> getClazz(String sub) {
+        String name = sub == null ? className : className + "$" + sub;
+
         try {
-            String name = sub == null ? className : className + "$" + sub;
-            if (className.startsWith("Craft"))
+            if (className.startsWith("Craft")) {
                 return Class.forName("org.bukkit.craftbukkit." + ServerVersion.getServerVersionString()
                         + (packageName == null ? "" : "." + packageName) + "." + name);
+            }
+
             return Class.forName("net.minecraft." + (
                     ServerVersion.isServerVersionAtLeast(ServerVersion.V1_17) && packageName != null
                             ? packageName : "server." + ServerVersion.getServerVersionString()) + "." + name);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+        } catch (ClassNotFoundException ex) {
+            ex.printStackTrace();
         }
+
         return null;
     }
 }
