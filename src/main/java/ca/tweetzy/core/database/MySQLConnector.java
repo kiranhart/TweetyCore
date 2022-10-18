@@ -15,48 +15,50 @@ import java.sql.SQLException;
  */
 public class MySQLConnector implements DatabaseConnector {
 
-    private final Plugin plugin;
-    private HikariDataSource hikari;
-    private boolean initializedSuccessfully;
+	private final Plugin plugin;
+	private HikariDataSource hikari;
+	private boolean initializedSuccessfully;
 
-    public MySQLConnector(Plugin plugin, String hostname, int port, String database, String username, String password, boolean useSSL) {
-        this.plugin = plugin;
+	public MySQLConnector(Plugin plugin, String hostname, int port, String database, String username, String password, boolean useSSL) {
+		this(plugin, hostname, port, database, username, password, useSSL, "?useUnicode=yes&characterEncoding=UTF-8&useServerPrepStmts=false&rewriteBatchedStatements=true&useSSL=");
+	}
 
-        System.out.println("connecting to " + hostname + " : " + port);
+	public MySQLConnector(Plugin plugin, String hostname, int port, String database, String username, String password, boolean useSSL, String additionalConnectionParams) {
+		this.plugin = plugin;
 
-        HikariConfig config = new HikariConfig();
-        config.setJdbcUrl("jdbc:mysql://" + hostname + ":" + port + "/" + database + "?useUnicode=yes&characterEncoding=UTF-8&useServerPrepStmts=false&rewriteBatchedStatements=true&useSSL=" + useSSL);
-        config.setUsername(username);
-        config.setPassword(password);
-        config.setMaximumPoolSize(3);
-//        config.addDataSourceProperty("characterEncoding", "utf8");
-//        config.addDataSourceProperty("useUnicode","true");
+		System.out.println("connecting to " + hostname + " : " + port);
 
-        try {
-            this.hikari = new HikariDataSource(config);
-            this.initializedSuccessfully = true;
-        } catch (Exception ex) {
-            this.initializedSuccessfully = false;
-        }
-    }
+		HikariConfig config = new HikariConfig();
+		config.setJdbcUrl("jdbc:mysql://" + hostname + ":" + port + "/" + database + additionalConnectionParams + useSSL);
+		config.setUsername(username);
+		config.setPassword(password);
+		config.setMaximumPoolSize(3);
 
-    @Override
-    public boolean isInitialized() {
-        return this.initializedSuccessfully;
-    }
+		try {
+			this.hikari = new HikariDataSource(config);
+			this.initializedSuccessfully = true;
+		} catch (Exception ex) {
+			this.initializedSuccessfully = false;
+		}
+	}
 
-    @Override
-    public void closeConnection() {
-        this.hikari.close();
-    }
+	@Override
+	public boolean isInitialized() {
+		return this.initializedSuccessfully;
+	}
 
-    @Override
-    public void connect(ConnectionCallback callback) {
-        try (Connection connection = this.hikari.getConnection()) {
-            callback.accept(connection);
-        } catch (SQLException ex) {
-            this.plugin.getLogger().severe("An error occurred executing a MySQL query: " + ex.getMessage());
-            ex.printStackTrace();
-        }
-    }
+	@Override
+	public void closeConnection() {
+		this.hikari.close();
+	}
+
+	@Override
+	public void connect(ConnectionCallback callback) {
+		try (Connection connection = this.hikari.getConnection()) {
+			callback.accept(connection);
+		} catch (SQLException ex) {
+			this.plugin.getLogger().severe("An error occurred executing a MySQL query: " + ex.getMessage());
+			ex.printStackTrace();
+		}
+	}
 }

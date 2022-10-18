@@ -17,6 +17,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -146,7 +147,7 @@ public class PlayerChatInput<T> implements Listener {
 		this.onCommand = onCommand;
 	}
 
-	@EventHandler
+	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
 	public void onPlayerChatEvent(AsyncPlayerChatEvent e) {
 		if (!player.getUniqueId().equals(e.getPlayer().getUniqueId()))
 			return;
