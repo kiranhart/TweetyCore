@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>ca.tweetzy</groupId>
   <artifactId>tweetycore</artifactId>
-  <version>3.4.0</version>
+  <version>3.5.0</version>
   <build>
     <sourceDirectory>./src/main/java</sourceDirectory>
     <defaultGoal>clean install</defaultGoal>
@@ -271,9 +271,9 @@
   </dependencies>
   <distributionManagement>
     <repository>
-      <id>github</id>
-      <name>GitHub kiranhart Apache Maven Packages</name>
-      <url>https://maven.pkg.github.com/kiranhart/TweetyCore</url>
+      <id>repsy</id>
+      <name>Tweetzy Maven Repo On Repsy</name>
+      <url>https://repo.repsy.io/mvn/kiran/tweetzy</url>
     </repository>
   </distributionManagement>
   <properties>
