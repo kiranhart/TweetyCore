@@ -6,7 +6,7 @@
     <groupId>ca.tweetzy</groupId>
     <artifactId>tweetycore</artifactId>
     <modelVersion>4.0.0</modelVersion>
-    <version>3.5.0</version>
+    <version>3.6.0</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -69,8 +69,15 @@
                                 <includes>
                                     <include>ca.tweetzy:*</include>
                                     <include>com.zaxxer:HikariCP</include>
+                                    <include>de.tr7zw:item-nbt-api</include>
                                 </includes>
                             </artifactSet>
+                            <relocations>
+                                <relocation>
+                                    <pattern>de.tr7zw.changeme.nbtapi</pattern>
+                                    <shadedPattern>ca.tweetzy.core.third_party.de.tr7zw.nbtapi</shadedPattern>
+                                </relocation>
+                            </relocations>
                             <filters>
                                 <filter>
                                     <artifact>*:*</artifact>
@@ -121,6 +128,11 @@
             <groupId>com.mojang</groupId>
             <artifactId>authlib</artifactId>
             <version>1.5.21</version>
+        </dependency>
+        <dependency>
+            <groupId>de.tr7zw</groupId>
+            <artifactId>item-nbt-api</artifactId>
+            <version>2.11.3</version>
         </dependency>
         <!-- Plugins -->
         <dependency>

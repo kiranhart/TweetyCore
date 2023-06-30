@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>ca.tweetzy</groupId>
   <artifactId>tweetycore</artifactId>
-  <version>3.5.0</version>
+  <version>3.6.0</version>
   <build>
     <sourceDirectory>./src/main/java</sourceDirectory>
     <defaultGoal>clean install</defaultGoal>
@@ -46,8 +46,15 @@
                 <includes>
                   <include>ca.tweetzy:*</include>
                   <include>com.zaxxer:HikariCP</include>
+                  <include>de.tr7zw:item-nbt-api</include>
                 </includes>
               </artifactSet>
+              <relocations>
+                <relocation>
+                  <pattern>de.tr7zw.changeme.nbtapi</pattern>
+                  <shadedPattern>ca.tweetzy.core.third_party.de.tr7zw.nbtapi</shadedPattern>
+                </relocation>
+              </relocations>
               <filters>
                 <filter>
                   <artifact>*:*</artifact>
