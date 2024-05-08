@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>ca.tweetzy</groupId>
   <artifactId>tweetycore</artifactId>
-  <version>3.7.0</version>
+  <version>3.9.0</version>
   <build>
     <sourceDirectory>./src/main/java</sourceDirectory>
     <defaultGoal>clean install</defaultGoal>
@@ -46,15 +46,8 @@
                 <includes>
                   <include>ca.tweetzy:*</include>
                   <include>com.zaxxer:HikariCP</include>
-                  <include>de.tr7zw:item-nbt-api</include>
                 </includes>
               </artifactSet>
-              <relocations>
-                <relocation>
-                  <pattern>de.tr7zw.changeme.nbtapi</pattern>
-                  <shadedPattern>ca.tweetzy.core.third_party.de.tr7zw.nbtapi</shadedPattern>
-                </relocation>
-              </relocations>
               <filters>
                 <filter>
                   <artifact>*:*</artifact>
@@ -98,7 +91,7 @@
     <dependency>
       <groupId>org.spigotmc</groupId>
       <artifactId>spigot</artifactId>
-      <version>1.19-R0.1-SNAPSHOT</version>
+      <version>1.20.3-R0.1-SNAPSHOT</version>
       <scope>provided</scope>
       <exclusions>
         <exclusion>
@@ -127,10 +120,6 @@
         </exclusion>
         <exclusion>
           <artifactId>datafixerupper</artifactId>
-          <groupId>com.mojang</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>javabridge</artifactId>
           <groupId>com.mojang</groupId>
         </exclusion>
         <exclusion>
@@ -194,7 +183,7 @@
           <groupId>net.sf.jopt-simple</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>log4j-slf4j18-impl</artifactId>
+          <artifactId>log4j-slf4j2-impl</artifactId>
           <groupId>org.apache.logging.log4j</groupId>
         </exclusion>
         <exclusion>
@@ -210,8 +199,8 @@
           <groupId>org.xerial</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>mysql-connector-java</artifactId>
-          <groupId>mysql</groupId>
+          <artifactId>mysql-connector-j</artifactId>
+          <groupId>com.mysql</groupId>
         </exclusion>
         <exclusion>
           <artifactId>maven-resolver-provider</artifactId>

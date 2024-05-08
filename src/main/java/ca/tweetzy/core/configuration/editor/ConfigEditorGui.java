@@ -8,7 +8,6 @@ import ca.tweetzy.core.gui.GuiUtils;
 import ca.tweetzy.core.gui.SimplePagedGui;
 import ca.tweetzy.core.input.ChatPrompt;
 import ca.tweetzy.core.utils.TextUtils;
-import ca.tweetzy.core.utils.items.ItemUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
@@ -210,7 +209,7 @@ public class ConfigEditorGui extends Gui {
 
 				if ((Boolean) val) {
 					updateItemType(index, XMaterial.LIME_DYE);
-					highlightItem(index);
+//					highlightItem(index);
 				}
 				index++;
 			}
@@ -339,10 +338,10 @@ public class ConfigEditorGui extends Gui {
 		boolean val = !node.getBoolean(path);
 		node.set(path, val);
 		if (val) {
-			setItem(clickCell, ItemUtils.addGlow(inventory.getItem(clickCell)));
+//			setItem(clickCell, ItemUtils.addGlow(inventory.getItem(clickCell)));
 			updateItemType(clickCell, XMaterial.LIME_DYE);
 		} else {
-			setItem(clickCell, ItemUtils.removeGlow(inventory.getItem(clickCell)));
+//			setItem(clickCell, ItemUtils.removeGlow(inventory.getItem(clickCell)));
 			updateItemType(clickCell, XMaterial.RED_DYE);
 		}
 		updateValue(clickCell, path);

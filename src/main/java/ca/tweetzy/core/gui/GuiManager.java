@@ -143,9 +143,9 @@ public class GuiManager {
 					event.setCancelled(!gui.isAllowShiftClick());
 					if (gui.onClick(manager, player, openInv, event)) {
 						if (event.getRawSlot() == gui.nextPageIndex || event.getRawSlot() == gui.prevPageIndex)
-							player.playSound(player.getLocation(), gui.getNavigateSound().parseSound(), 1F, 1F);
+							player.playSound(player.getLocation(), gui.getNavigateSound(), 1F, 1F);
 						else
-							player.playSound(player.getLocation(), gui.getDefaultSound().parseSound(), 1F, 1F);
+							player.playSound(player.getLocation(), gui.getDefaultSound(), 1F, 1F);
 					}
 				} else if (event.getClick() == ClickType.DOUBLE_CLICK) {
 					// always cancel this event if there are matching gui elements, since it tends to do bad things
@@ -170,14 +170,14 @@ public class GuiManager {
 					// process button press
 					if (gui.onClick(manager, player, openInv, event)) {
 						if (event.getRawSlot() == gui.nextPageIndex || event.getRawSlot() == gui.prevPageIndex)
-							player.playSound(player.getLocation(), gui.getNavigateSound().parseSound(), 1F, 1F);
+							player.playSound(player.getLocation(), gui.getNavigateSound(), 1F, 1F);
 						else
-							player.playSound(player.getLocation(), gui.getDefaultSound().parseSound(), 1F, 1F);
+							player.playSound(player.getLocation(), gui.getDefaultSound(), 1F, 1F);
 					}
 				} else {
 					// Player clicked in the bottom inventory while GUI is open
 					if (gui.onClickPlayerInventory(manager, player, openInv, event)) {
-						player.playSound(player.getLocation(), gui.getDefaultSound().parseSound(), 1F, 1F);
+						player.playSound(player.getLocation(), gui.getDefaultSound(), 1F, 1F);
 					} else if (!gui.acceptsItems || event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY) {
 						event.setCancelled(true);
 					}

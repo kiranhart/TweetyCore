@@ -3,6 +3,7 @@ package ca.tweetzy.core.gui;
 import ca.tweetzy.core.compatibility.XMaterial;
 import ca.tweetzy.core.utils.TextUtils;
 import ca.tweetzy.core.utils.items.TItemBuilder;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
@@ -18,10 +19,10 @@ public abstract class BaseGUI extends Gui {
 		setTitle(TextUtils.formatText(title));
 		setRows(rows);
 		setDefaultSound(null);
-		setDefaultItem(GuiUtils.getBorderItem(XMaterial.BLACK_STAINED_GLASS_PANE));
+		setDefaultItem(new TItemBuilder(Material.BLACK_STAINED_GLASS_PANE).setName(" ").toItemStack());
 	}
 
-	public BaseGUI(final Gui parent, final String title) {
+	public BaseGUI(final Gui parent,final String title) {
 		this(parent, title, 6);
 	}
 
@@ -60,21 +61,17 @@ public abstract class BaseGUI extends Gui {
 		return IntStream.rangeClosed(0, 44).boxed().collect(Collectors.toList());
 	}
 
-	protected ItemStack getBackButton() {
-		return new TItemBuilder(XMaterial.DARK_OAK_DOOR.parseMaterial()).setName("&aBack").setLore("&7Click to go back").toItemStack();
-	}
+	protected abstract ItemStack getBackButton();
 
-	protected ItemStack getExitButton() {
-		return new TItemBuilder(XMaterial.BARRIER.parseMaterial()).setName("&cExit").setLore("&7Click to close menu").toItemStack();
-	}
+	protected abstract ItemStack getExitButton();
 
-	protected ItemStack getPreviousPageButton() {
-		return new TItemBuilder(XMaterial.ARROW.parseMaterial()).setName("&ePrevious").toItemStack();
-	}
+	protected abstract ItemStack getPreviousButton();
 
-	protected ItemStack getNextPageButton() {
-		return new TItemBuilder(XMaterial.ARROW.parseMaterial()).setName("&eNext").toItemStack();
-	}
+	protected abstract ItemStack getNextButton();
+
+	protected abstract int getPreviousButtonSlot();
+
+	protected abstract int getNextButtonSlot();
 
 	protected int getBackExitButtonSlot() {
 		return this.rows * 9 - 9;

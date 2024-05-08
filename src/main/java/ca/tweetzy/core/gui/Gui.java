@@ -1,13 +1,13 @@
 package ca.tweetzy.core.gui;
 
-import ca.tweetzy.core.compatibility.ServerVersion;
 import ca.tweetzy.core.compatibility.XMaterial;
 import ca.tweetzy.core.compatibility.XSound;
 import ca.tweetzy.core.gui.events.*;
 import ca.tweetzy.core.gui.methods.*;
 import ca.tweetzy.core.utils.TextUtils;
-import ca.tweetzy.core.utils.items.ItemUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -58,8 +58,8 @@ public class Gui {
 	protected Closable closer = null;
 	protected Droppable dropper = null;
 	protected Pagable pager = null;
-	protected XSound defaultSound = XSound.UI_BUTTON_CLICK;
-	protected XSound navigateSound = XSound.ENTITY_BAT_TAKEOFF;
+	protected Sound defaultSound = XSound.UI_BUTTON_CLICK.parseSound();
+	protected Sound navigateSound = XSound.ENTITY_BAT_TAKEOFF.parseSound();
 
 	public Gui() {
 		this.rows = 3;
@@ -366,36 +366,6 @@ public class Gui {
 		if (mirrorRow && mirrorCol)
 			setItem(rows - row - 1, 8 - col, item);
 		return this;
-	}
-
-	@NotNull
-	public Gui highlightItem(int cell) {
-		ItemStack item = cellItems.get(cell);
-		if (item != null && item.getType() != Material.AIR) {
-			setItem(cell, ItemUtils.addGlow(item));
-		}
-		return this;
-	}
-
-	@NotNull
-	public Gui highlightItem(int row, int col) {
-		final int cell = col + row * inventoryType.columns;
-		return highlightItem(cell);
-	}
-
-	@NotNull
-	public Gui removeHighlight(int cell) {
-		ItemStack item = cellItems.get(cell);
-		if (item != null && item.getType() != Material.AIR) {
-			setItem(cell, ItemUtils.removeGlow(item));
-		}
-		return this;
-	}
-
-	@NotNull
-	public Gui removeHighlight(int row, int col) {
-		final int cell = col + row * inventoryType.columns;
-		return removeHighlight(cell);
 	}
 
 	@NotNull
@@ -844,7 +814,7 @@ public class Gui {
 	protected static String trimTitle(String title) {
 		if (title == null) {
 			return "";
-		} else if (ServerVersion.isServerVersionAtOrBelow(ServerVersion.V1_8) && title.length() > 32) {
+		} else if (Bukkit.getServer().getBukkitVersion().split("-")[0].startsWith("1.8") && title.length() > 32) {
 			return title.charAt(30) == '\u00A7' ? title.substring(0, 30) : title.substring(0, 31);
 		}
 		return title;
@@ -908,19 +878,19 @@ public class Gui {
 		}
 	}
 
-	public XSound getDefaultSound() {
+	public Sound getDefaultSound() {
 		return defaultSound;
 	}
 
-	public void setDefaultSound(XSound sound) {
+	public void setDefaultSound(Sound sound) {
 		defaultSound = sound;
 	}
 
-	public XSound getNavigateSound() {
+	public Sound getNavigateSound() {
 		return this.navigateSound;
 	}
 
-	public void setNavigateSound(XSound sound) {
+	public void setNavigateSound(Sound sound) {
 		this.navigateSound = sound;
 	}
 

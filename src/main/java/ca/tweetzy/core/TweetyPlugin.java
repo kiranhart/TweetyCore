@@ -68,6 +68,7 @@ public abstract class TweetyPlugin extends JavaPlugin {
         try {
             onPluginLoad();
         } catch (Throwable t) {
+            t.printStackTrace();
             Bukkit.getLogger().log(Level.SEVERE,
                     "Unexpected error while loading " + getDescription().getName()
                             + " v" + getDescription().getVersion()
@@ -102,6 +103,7 @@ public abstract class TweetyPlugin extends JavaPlugin {
             }
 
         } catch (Throwable t) {
+            t.printStackTrace();
             Bukkit.getLogger().log(Level.SEVERE,
                     "Unexpected error while loading " + getDescription().getName()
                             + " v" + getDescription().getVersion()
